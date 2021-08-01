@@ -29,7 +29,7 @@ namespace lilac {
 		* the hookee should have the same calling convention and parameters
 		* as the detour. otherwise, crashing is almost certain to occur.
 		*/
-		static const HookHandle* LILAC_CALL add_hook(const void* address, const void* detour);
+		static const HookHandle* LILAC_CALL add_hook(void* const address, const void* detour);
 
 		/*
 		* params:
@@ -49,6 +49,8 @@ namespace lilac {
 			bool in_hook = false;
 			size_t index = 0;
 			void* return_address;
+			uint8_t replaced_byte = 0;
+			void* gateway = 0;
 		};
 
 		static inline std::map<const void*, HookNode> all_hooks = {};

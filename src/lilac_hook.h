@@ -33,7 +33,7 @@ typedef struct {
 * the hookee should have the same calling convention and parameters
 * as the detour. otherwise, crashing is almost certain to occur.
 */
-const LilacHookHandle* LILAC_CALL lilac_add_hook(const void* address, const void* detour);
+const LilacHookHandle* LILAC_CALL lilac_add_hook(void* const address, const void* detour);
 
 /*
 * params:
