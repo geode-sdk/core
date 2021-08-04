@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+// msvc is stupid, this entire file is temporary anyways
+#pragma optimize("", off)
 void foobar() {
     std::cout << "i am foobar()" << std::endl;
 }
@@ -28,15 +30,16 @@ void multibar_H() {
 }
 
 int main() {
-    // foobar();
+    foobar();
     lilac::HookManager::add_hook(foobar, foobar_H);
-    // foobar();
-    // foobar();
+    foobar();
+    foobar();
     lilac::HookManager::add_hook(foobar, foobar_H2);
     foobar();
-    // foobar();
+    foobar();
     
     // this causes an infinite loop
     // lilac::HookManager::add_hook(multibar, multibar_H);
     // multibar();
 }
+#pragma optimize("", on)
