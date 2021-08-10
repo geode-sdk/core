@@ -3,6 +3,8 @@
 
 #ifdef __cplusplus
 extern "C" {
+#else
+typedef _Bool bool;
 #endif
 
 #ifdef LILAC_CALL
@@ -35,7 +37,7 @@ LilacHookHandle LILAC_CALL lilac_add_hook(const void* address, const void* detou
 * true if the hook was successfully removed.
 * false if removal failed.
 */
-unsigned char LILAC_CALL lilac_remove_hook(LilacHookHandle handle);
+bool LILAC_CALL lilac_remove_hook(LilacHookHandle handle);
 
 #ifdef __cplusplus
 }

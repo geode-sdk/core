@@ -21,6 +21,6 @@ extern "C" LilacHookHandle LILAC_CALL lilac_add_hook(const void* address, const 
 	return impl::HookManager::add_hook(address, detour);
 }
 
-extern "C" unsigned char LILAC_CALL lilac_remove_hook(LilacHookHandle handle) {
+extern "C" bool LILAC_CALL lilac_remove_hook(LilacHookHandle handle) {
 	return impl::HookManager::remove_hook(handle);
 }
