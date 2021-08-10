@@ -1,8 +1,6 @@
 #ifndef __LILAC_HOOK_H__
 #define __LILAC_HOOK_H__
 
-#include <stdint.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -10,12 +8,9 @@ extern "C" {
 #ifdef LILAC_CALL
 	#undef LILAC_CALL
 #endif
-#define LILAC_CALL __vectorcall
+#define LILAC_CALL __stdcall
 
-typedef struct {
-	const void* m_address;
-	const void* m_detour;
-} LilacHookHandle;
+typedef const void* LilacHookHandle;
 
 /* 
 * params:
@@ -27,13 +22,10 @@ typedef struct {
 * a valid, constant pointer to a hook handle if succeeded.
 * 
 * notes:
-* do not modify the returned pointer if valid. doing so will result in
-* undefined behavior.
-* 
-* the hookee should have the same calling convention and parameters
+* the hooked function should have the same calling convention and parameters
 * as the detour. otherwise, crashing is almost certain to occur.
 */
-const LilacHookHandle* LILAC_CALL lilac_add_hook(void* const address, const void* detour);
+LilacHookHandle LILAC_CALL lilac_add_hook(const void* address, const void* detour);
 
 /*
 * params:
@@ -43,7 +35,7 @@ const LilacHookHandle* LILAC_CALL lilac_add_hook(void* const address, const void
 * true if the hook was successfully removed.
 * false if removal failed.
 */
-bool LILAC_CALL lilac_remove_hook(const LilacHookHandle* handle);
+unsigned char LILAC_CALL lilac_remove_hook(LilacHookHandle handle);
 
 #ifdef __cplusplus
 }

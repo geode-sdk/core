@@ -29,7 +29,7 @@ namespace lilac {
 		* the hookee should have the same calling convention and parameters
 		* as the detour. otherwise, crashing is almost certain to occur.
 		*/
-		static const HookHandle* LILAC_CALL add_hook(void* const address, const void* detour);
+		static HookHandle LILAC_CALL add_hook(const void* address, const void* detour);
 
 		/*
 		* params:
@@ -39,24 +39,7 @@ namespace lilac {
 		* true if the hook was successfully removed.
 		* false if removal failed.
 		*/
-		static bool LILAC_CALL remove_hook(const HookHandle* handle);
-
-	private:
-		// node that represents the state of the hooks at a certain address.
-		class HookNode {
-		public:
-			std::vector<HookHandle*> hooks = {};
-			bool in_hook = false;
-			size_t index = 0;
-			void* return_address;
-			uint8_t replaced_byte = 0;
-			void* gateway = 0;
-		};
-
-		static inline std::map<const void*, HookNode> all_hooks = {};
-		static inline bool initialized = false;
-
-		static long NTAPI handler(EXCEPTION_POINTERS* info);
+		static bool LILAC_CALL remove_hook(HookHandle handle);
 	};
 }
 
