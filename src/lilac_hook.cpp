@@ -1,9 +1,4 @@
 // for making sure function declarations match easier
-#include <windows.h>
-#include <vector>
-#include <map>
-#include <stack>
-
 #include "lilac_hook.hpp"
 #include "impl/lilac_hook_impl.hpp"
 

@@ -3,9 +3,6 @@
 
 #include "lilac_hook.h"
 
-#include <vector>
-#include <map>
-
 namespace lilac {
 	using HookHandle = LilacHookHandle;
 
@@ -37,7 +34,5 @@ namespace lilac {
 		static bool LILAC_CALL remove(HookHandle handle);
 	};
 }
-
-
 
 #endif /* __LILAC_HOOK_HPP__ */
