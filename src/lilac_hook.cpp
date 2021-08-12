@@ -9,11 +9,11 @@
 
 using namespace lilac;
 
-HookHandle LILAC_CALL HookManager::add_hook(const void* address, const void* detour) {
+HookHandle LILAC_CALL Hooks::add(const void* address, const void* detour) {
 	return impl::HookManager::add_hook(address, detour);
 }
 
-bool LILAC_CALL HookManager::remove_hook(HookHandle handle) {
+bool LILAC_CALL Hooks::remove(HookHandle handle) {
 	return impl::HookManager::remove_hook(handle);
 }
 

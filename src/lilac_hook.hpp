@@ -6,12 +6,10 @@
 #include <vector>
 #include <map>
 
-#include <windows.h>
-
 namespace lilac {
 	using HookHandle = LilacHookHandle;
 
-	class HookManager {
+	class Hooks {
 	public:
 		/*
 		* params:
@@ -23,13 +21,10 @@ namespace lilac {
 		* a valid, constant pointer to a hook handle if succeeded.
 		*
 		* notes:
-		* do not modify the returned pointer if valid. doing so will result in
-		* undefined behavior.
-		*
-		* the hookee should have the same calling convention and parameters
+		* the hooked function should have the same calling convention and parameters
 		* as the detour. otherwise, crashing is almost certain to occur.
 		*/
-		static HookHandle LILAC_CALL add_hook(const void* address, const void* detour);
+		static HookHandle LILAC_CALL add(const void* address, const void* detour);
 
 		/*
 		* params:
@@ -39,7 +34,7 @@ namespace lilac {
 		* true if the hook was successfully removed.
 		* false if removal failed.
 		*/
-		static bool LILAC_CALL remove_hook(HookHandle handle);
+		static bool LILAC_CALL remove(HookHandle handle);
 	};
 }
 

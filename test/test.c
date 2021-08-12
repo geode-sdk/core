@@ -4,7 +4,7 @@
 #include <stdio.h>
 
 void to_hook(const char* str) {
-	printf("%s\n", str);
+	printf("[STATUS]: %s\n", str);
 }
 
 void hook3(const char* str) {
@@ -39,7 +39,7 @@ void hook1(const char* str) {
 
 void(*minhook_gate)(const char*) = NULL;
 void minhook_hook(const char* str) {
-	printf("hi from minhook!\n");
+	minhook_gate("minhook");
 	minhook_gate(str);
 }
 
@@ -49,9 +49,24 @@ int main() {
 	MH_CreateHook(to_hook, minhook_hook, (void**)&minhook_gate);
 	MH_EnableHook(to_hook);
 
-	lilac_add_hook(to_hook, hook1);
-	lilac_add_hook(to_hook, hook2);
-	lilac_add_hook(to_hook, hook3);
+	typedef LilacHookHandle h;
+
+	h h1 = lilac_add_hook(to_hook, hook1);
+	h h2 = lilac_add_hook(to_hook, hook2);
+	h h3 = lilac_add_hook(to_hook, hook3);
+
+	to_hook("main");
+
+	printf("\n--removing hook1--\n\n");
+	lilac_remove_hook(h1);
+
+	to_hook("main");
+
+	printf("\n--removing all--\n\n");
+	lilac_remove_hook(h2);
+	lilac_remove_hook(h3);
+
+	printf("removing invalid hook returned: %s\n\n", (lilac_remove_hook(h1) ? "true" : "false"));
 
 	to_hook("main");
 }
