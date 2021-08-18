@@ -1,6 +1,7 @@
 #include "lilac_hook.h"
 #include "minhook/include/MinHook.h"
 
+#include <Windows.h>
 #include <stdio.h>
 
 void to_hook(const char* str) {

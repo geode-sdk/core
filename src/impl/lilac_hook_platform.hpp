@@ -9,7 +9,7 @@ namespace lilac::impl {
 	template<typename T>
 	class Platform {
 	public:
-		static constexpr auto get_trap() {
+		static constexpr const char* get_trap() {
 			return T::trap;
 		}
 
@@ -31,7 +31,7 @@ namespace lilac::impl {
 	struct Exception {
 		const void* address = nullptr;
 		const void* return_address = nullptr;
-		const void** instruction_pointer;
+		const void*& instruction_pointer;
 	};
 }
 

@@ -3,12 +3,10 @@
 
 #include "lilac_hook_platform.hpp"
 
-#define PLATFORM lilac::impl::WindowsX86
-
 namespace lilac::impl {
 	class WindowsX86 : public Platform<WindowsX86> {
 	public:
-	#ifdef NDEBUG
+	#if defined(NDEBUG)
 		static constexpr char trap[] = { '\xCC' };
 	#else
 		static constexpr char trap[] = { '\x0F', '\x0B' };
@@ -18,6 +16,8 @@ namespace lilac::impl {
 		static void write_memory(void* to, const void* from, size_t size);
 		static bool initialize();
 	};
+
+	using TargetPlatform = Platform<WindowsX86>;
 }
 
 #endif /* __LILAC_HOOK_WINDOWS_HPP__ */

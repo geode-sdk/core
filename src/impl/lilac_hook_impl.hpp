@@ -1,35 +1,36 @@
 #ifndef __LILAC_HOOK_IMPL_HPP__
 #define __LILAC_HOOK_IMPL_HPP__
 
-#include "../lilac_hook.hpp"
-#include "lilac_hook_platform.hpp"
+#include "lilac_hook.hpp"
 
 #include <vector>
 #include <map>
 
-#ifdef _WIN32
-#include "lilac_hook_windows.hpp"
+#if defined(_WIN32)
+	#include "lilac_hook_windows.hpp"
 #else
-// everything else is unsupported rn LOL
-#error Currently unsupported platform.
+	// everything else is unsupported rn LOL
+	#error Currently unsupported platform.
 #endif
 
 namespace lilac::impl {
 	class HookManager {
 	private:
-		struct CallFrame;
-
-		struct HookChain {
-			std::vector<const void*> detours = {};
-			std::vector<CallFrame*> frames = {};
-			char original_bytes[Platform<PLATFORM>::get_trap_size()] = { 0 };
-		};
+		struct HookChain;
 
 		struct CallFrame {
 			const void* address = nullptr;
 			HookChain* parent = nullptr;
-			char original_bytes[Platform<PLATFORM>::get_trap_size()] = { 0 };
+			char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
 		};
+
+		struct HookChain {
+			const void* address = nullptr;
+			std::vector<const void*> detours = {};
+			std::vector<CallFrame*> frames = {};
+			char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
+		};
+
 
 	private:
 		static inline std::map<const void*, HookChain> all_hooks = {};

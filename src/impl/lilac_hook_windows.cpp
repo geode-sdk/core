@@ -8,12 +8,22 @@ using namespace impl;
 
 namespace {
 	long __stdcall handler(EXCEPTION_POINTERS* info) {
-		const void** ptr = reinterpret_cast<const void**>(&info->ContextRecord->Eip);
+	#if defined(_WIN64) 
+		const void* ret = *reinterpret_cast<void**>(info->ContextRecord->Rsp);
+		const void** current = reinterpret_cast<const void**>(&info->ContextRecord->Rip);
+
+	#elif defined(_WIN32)
+		const void* ret = *reinterpret_cast<void**>(info->ContextRecord->Esp);
+		const void** current = reinterpret_cast<const void**>(&info->ContextRecord->Eip);
+
+	#endif
+
 		Exception exception = {
 			info->ExceptionRecord->ExceptionAddress,
-			 *reinterpret_cast<void**>(info->ContextRecord->Esp),
-			 ptr
+			 ret,
+			 *current
 		};
+	
 
 		if (HookManager::handler(exception)) {
 			return EXCEPTION_CONTINUE_EXECUTION;
