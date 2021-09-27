@@ -4,6 +4,8 @@
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */
+#include <cstddef>
+#include <iostream>
 
 namespace lilac::impl {
 	template<typename T>
@@ -25,7 +27,7 @@ namespace lilac::impl {
 			return T::initialize();
 		}
 
-		static const inline bool init = initialize();
+		// static const inline bool init = T::initialize();
 	};
 
 	struct Exception {

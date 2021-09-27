@@ -1,0 +1,66 @@
+{
+    "build_systems":
+    [
+        {
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "Lilac Core (OSX)",
+			"shell_cmd": "make -j4",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j4 clean",
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j4 rebuild_cache",
+				},
+				{
+					"name": "core",
+					"shell_cmd": "make -j4 core",
+				},
+			],
+			"working_dir": "${project_path}/build",
+		},
+		{
+			"file_regex": "(.+[^:]):(\\d+):(\\d+): (?:fatal )?((?:error|warning): .+)$",
+			"name": "Core (OSX)",
+			"shell_cmd": "make -j4",
+			"syntax": "Packages/CMakeBuilder/Syntax/Make.sublime-syntax",
+			"variants":
+			[
+				{
+					"name": "clean",
+					"shell_cmd": "make -j4 clean"
+				},
+				{
+					"name": "rebuild_cache",
+					"shell_cmd": "make -j4 rebuild_cache"
+				},
+				{
+					"name": "lilac_hook",
+					"shell_cmd": "make -j4 lilac_hook"
+				},
+				{
+					"name": "lilac_hook_test",
+					"shell_cmd": "make -j4 lilac_hook_test"
+				}
+			],
+			"working_dir": "${project_path}/build"
+		},
+	],
+    "folders":
+    [
+        {
+            "path": ".",
+        }
+	],
+    "settings":
+    {
+        "cmake":
+        {
+            "build_folder": "${project_path}/build",
+        },
+    },
+}

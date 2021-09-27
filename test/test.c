@@ -1,7 +1,5 @@
 #include "lilac_hook.h"
-#include "minhook/include/MinHook.h"
 
-#include <Windows.h>
 #include <stdio.h>
 
 void to_hook(const char* str) {
@@ -38,19 +36,14 @@ void hook1(const char* str) {
 	}
 }
 
-void(*minhook_gate)(const char*) = NULL;
-void minhook_hook(const char* str) {
-	minhook_gate("minhook");
-	minhook_gate(str);
-}
-
 int main() {
-	MH_Initialize();
-
-	MH_CreateHook(to_hook, minhook_hook, (void**)&minhook_gate);
-	MH_EnableHook(to_hook);
 
 	typedef LilacHookHandle h;
+
+    fprintf(stdout, "address to_hook %p\n", (void*)&to_hook);
+    fprintf(stdout, "address hook1 %p\n", (void*)&hook1);
+    fprintf(stdout, "address hook2 %p\n", (void*)&hook2);
+    fprintf(stdout, "address hook3 %p\n", (void*)&hook3);
 
 	h h1 = lilac_add_hook(to_hook, hook1);
 	h h2 = lilac_add_hook(to_hook, hook2);
