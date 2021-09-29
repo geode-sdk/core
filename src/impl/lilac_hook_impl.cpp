@@ -37,7 +37,7 @@ bool HookManager::find_in_hooks(Exception& info) {
 			}
 		}
 		else {
-			auto& result = all_frames.insert({ info.return_address, CallFrame() });
+			auto result = all_frames.insert({ info.return_address, CallFrame() });
 			if (!result.second) {
 				// insertion failed
 				return false;

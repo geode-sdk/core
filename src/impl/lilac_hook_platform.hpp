@@ -4,6 +4,7 @@
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */
+#include <cstddef>
 
 namespace lilac::impl {
 	template<typename T>

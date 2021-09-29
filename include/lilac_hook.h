@@ -10,7 +10,19 @@ typedef _Bool bool;
 #ifdef LILAC_CALL
 	#undef LILAC_CALL
 #endif
-#define LILAC_CALL __stdcall
+
+#if defined(_WIN32)
+    // idk maybe clean platform stuff more
+    #define LILAC_CALL __stdcall
+#elif defined(__APPLE__)
+    #define LILAC_CALL 
+
+#else
+    // everything else is unsupported rn LOL
+    #error Currently unsupported platform.
+#endif
+
+
 
 typedef const void* LilacHookHandle;
 
