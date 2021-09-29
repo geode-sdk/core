@@ -3,11 +3,16 @@
 #if defined(_WIN32)
 	#include "minhook/include/MinHook.h"
 	#include <Windows.h>
+	#define NOINLINE __declspec(noinline)
+#elif
+	#define NOINLINE __attribute__((noinline))
 #endif
 
 #include <stdio.h>
 
-void to_hook(const char* str) {
+// you see, on release builds this function got inlined
+// meaning none of the hooks would work at all
+void NOINLINE to_hook(const char* str) {
 	printf("[STATUS]: %s\n", str);
 }
 
