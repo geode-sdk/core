@@ -11,43 +11,43 @@ using namespace lilac;
 using namespace impl;
 
 namespace {
-    void handler(int signal, siginfo_t* signal_info, void* vcontext) {
-        ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
+	void handler(int signal, siginfo_t* signal_info, void* vcontext) {
+		ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
-        const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__rsp);
-        const void** current = reinterpret_cast<const void**>(&context->uc_mcontext->__ss.__rip);
+		const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__rsp);
+		const void** current = reinterpret_cast<const void**>(&context->uc_mcontext->__ss.__rip);
 
-        Exception exception = {
-            signal_info->si_addr,
-            ret,
-            *current
-        };
+		Exception exception = {
+			signal_info->si_addr,
+			ret,
+			*current
+		};
 
-        HookManager::handler(exception);
-    }
+		HookManager::handler(exception);
+	}
 }
 
 void MacOSX::write_memory(void* to, const void* from, size_t size) {
-    kern_return_t ret;
-    
-    ret = mach_vm_protect(mach_task_self(), (mach_vm_address_t)to, size, FALSE, VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
-    if (ret != KERN_SUCCESS) return;
+	kern_return_t ret;
+	
+	ret = mach_vm_protect(mach_task_self(), (mach_vm_address_t)to, size, FALSE, VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
+	if (ret != KERN_SUCCESS) return;
 
-    ret = mach_vm_write(mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size);
+	ret = mach_vm_write(mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size);
 }
 
 bool MacOSX::initialize() {
-    volatile int a = init; /* epic bugfixing */
-    struct sigaction action;
-    memset(&action, '\0', sizeof(action));
-    action.sa_sigaction = &handler;
-    action.sa_flags = SA_SIGINFO;
+	volatile int a = init; /* epic bugfixing */
+	struct sigaction action;
+	memset(&action, '\0', sizeof(action));
+	action.sa_sigaction = &handler;
+	action.sa_flags = SA_SIGINFO;
 
-    #if defined(NDEBUG)
-        int signal = SIGTRAP;
-    #else
-        int signal = SIGILL;
-    #endif
+	#if defined(NDEBUG)
+		int signal = SIGTRAP;
+	#else
+		int signal = SIGILL;
+	#endif
 
-    return sigaction(signal, &action, NULL) < 0;
+	return sigaction(signal, &action, NULL) < 0;
 }

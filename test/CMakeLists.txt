@@ -8,7 +8,7 @@ if(APPLE)
 elseif(WIN32)
     target_link_libraries(lilac_hook_test 
         lilac_hook
-        "${CMAKE_CURRENT_LIST_DIR}/minhook/libMinHook.x86.lib")
+        "${CMAKE_CURRENT_LIST_DIR}/minhook/libMinHook-x86-v141-mtd.lib")
 else()
 endif()
 
