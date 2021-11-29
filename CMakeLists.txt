@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.8)
 
-project(lilac_hook LANGUAGES C CXX)
+project(lilac_core LANGUAGES C CXX)
 
-add_subdirectory("src")
+add_subdirectory("src/hook")
+add_subdirectory("src/meta")
+
+set(MAIN_PROJECT OFF)
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
+	set(MAIN_PROJECT ON)
+endif()
+
+if (MAIN_PROJECT)
 	add_subdirectory("test")
 endif()

@@ -1,4 +1,4 @@
-# Hooking
+# lilac::core::hook
 
 ### Abstract
 
@@ -113,4 +113,6 @@ trap hooking on the desired platform. Developers will be required to specify:
 
 ### Issues
 
+- Android does not allow for dynamic allocation in signal handlers, and it is not well-defined behavior in the POSIX standard.
+  - Solution: spawn a separate thread on lilac initialization, that will be signaled to create memory. This'll probably look really ugly, so wrap it in some nice class.
 - I can't think of any as of now, which is good. (pie)

@@ -1,9 +1,9 @@
-#ifndef __LILAC_HOOK_MACOS_HPP__
-#define __LILAC_HOOK_MACOS_HPP__
+#ifndef LILAC_CORE_HOOK_MACOS_HPP
+#define LILAC_CORE_HOOK_MACOS_HPP
 
-#include "lilac_hook_platform.hpp"
+#include "platform.hpp"
 
-namespace lilac::impl {
+namespace lilac::core::hook {
 	class MacOSX : public Platform<MacOSX> {
 	public:
 		// wow these are the same
@@ -19,8 +19,6 @@ namespace lilac::impl {
 	};
 
 	using TargetPlatform = Platform<MacOSX>;
-
-
 }
 
-#endif /* __LILAC_HOOK_MACOS_HPP__ */
+#endif /* LILAC_CORE_HOOK_MACOS_HPP */

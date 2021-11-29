@@ -1,5 +1,5 @@
-#include "lilac_hook_macos.hpp"
-#include "lilac_hook_impl.hpp"
+#include "macos.hpp"
+#include "impl.hpp"
 
 #include <mach/mach_vm.h>       /* mach_vm_*            */
 #include <mach/mach_init.h>     /* mach_task_self()     */
@@ -7,8 +7,7 @@
 #include <signal.h>             /* sigaction            */
 #include <sys/ucontext.h>       /* ucontext_t           */
 
-using namespace lilac;
-using namespace impl;
+using namespace lilac::core::hook;
 
 namespace {
 	void handler(int signal, siginfo_t* signal_info, void* vcontext) {

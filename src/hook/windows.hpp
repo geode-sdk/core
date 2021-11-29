@@ -1,9 +1,9 @@
-#ifndef __LILAC_HOOK_WINDOWS_HPP__
-#define __LILAC_HOOK_WINDOWS_HPP__
+#ifndef LILAC_CORE_HOOK_WINDOWS_HPP
+#define LILAC_CORE_HOOK_WINDOWS_HPP
 
-#include "lilac_hook_platform.hpp"
+#include "platform.hpp"
 
-namespace lilac::impl {
+namespace lilac::core::hook {
 	class WindowsX86 : public Platform<WindowsX86> {
 	public:
 	#if defined(NDEBUG)
@@ -20,4 +20,4 @@ namespace lilac::impl {
 	using TargetPlatform = Platform<WindowsX86>;
 }
 
-#endif /* __LILAC_HOOK_WINDOWS_HPP__ */
+#endif /* LILAC_CORE_HOOK_WINDOWS_HPP */

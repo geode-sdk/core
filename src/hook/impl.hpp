@@ -1,21 +1,18 @@
-#ifndef __LILAC_HOOK_IMPL_HPP__
-#define __LILAC_HOOK_IMPL_HPP__
+#ifndef LILAC_CORE_HOOK_IMPL_HPP
+#define LILAC_CORE_HOOK_IMPL_HPP
 
-#include "lilac_hook.hpp"
+#include "hook/hook.hpp"
 
 #include <vector>
 #include <map>
 
-#if defined(_WIN32)
-	#include "lilac_hook_windows.hpp"
-#elif defined(__APPLE__)
-	#include "lilac_hook_macos.hpp"
-#else
-	// everything else is unsupported rn LOL
-	#error Currently unsupported platform.
+#if defined(LILAC_TARGET_WINDOWS)
+	#include "windows.hpp"
+#elif defined(LILAC_TARGET_MACOS)
+	#include "macos.hpp"
 #endif
 
-namespace lilac::impl {
+namespace lilac::core::hook {
 	class HookManager {
 	private:
 		struct HookChain;
@@ -33,6 +30,10 @@ namespace lilac::impl {
 			char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
 		};
 
+		struct Handle {
+			const void* address;
+			const void* detour;
+		};
 
 	private:
 		static inline std::map<const void*, HookChain> all_hooks = {};
@@ -53,9 +54,9 @@ namespace lilac::impl {
 		// returns true if handled, false if not.
 		static bool handler(Exception& info);
 
-		static HookHandle LILAC_CALL add_hook(const void* address, const void* detour);
-		static bool LILAC_CALL remove_hook(HookHandle handle);
+		static hook::Handle LILAC_CALL add_hook(const void* address, const void* detour);
+		static bool LILAC_CALL remove_hook(hook::Handle handle);
 	};
 }
 
-#endif /* __LILAC_HOOK_IMPL_HPP__ */
+#endif /* LILAC_CORE_HOOK_IMPL_HPP */

@@ -1,10 +1,9 @@
-#include "lilac_hook.h"
+#include <lilac/core/hook/hook.hpp>
 
-#if defined(_WIN32)
-	#include "minhook/include/MinHook.h"
+#if defined(LILAC_TARGET_WINDOWS)
 	#include <Windows.h>
 	#define NOINLINE __declspec(noinline)
-#elif
+#elif defined(LILAC_TARGET_MACOS)
 	#define NOINLINE __attribute__((noinline))
 #endif
 
@@ -46,38 +45,30 @@ void hook1(const char* str) {
 	}
 }
 
-void(*minhook_gate)(const char*) = NULL;
-void minhook_hook(const char* str) {
-	minhook_gate("minhook");
-	minhook_gate(str);
+template<class A, class B>
+decltype(auto) add_hook(A func, B hook) {
+	return lilac::core::hook::add((void*)func, (void*)hook);
 }
 
 int main() {
-	#if defined(_WIN32)
-		MH_Initialize();
+	using namespace lilac::core;
 
-		MH_CreateHook(to_hook, minhook_hook, (void**)&minhook_gate);
-		MH_EnableHook(to_hook);
-	#endif
-
-	typedef LilacHookHandle h;
-
-	h h1 = lilac_add_hook(to_hook, hook1);
-	h h2 = lilac_add_hook(to_hook, hook2);
-	h h3 = lilac_add_hook(to_hook, hook3);
+	auto h1 = add_hook(to_hook, hook1);
+	auto h2 = add_hook(to_hook, hook2);
+	auto h3 = add_hook(to_hook, hook3);
 
 	to_hook("main");
 
 	printf("\n--removing hook1--\n\n");
-	lilac_remove_hook(h1);
+	hook::remove(h1);
 
 	to_hook("main");
 
 	printf("\n--removing all--\n\n");
-	lilac_remove_hook(h2);
-	lilac_remove_hook(h3);
+	hook::remove(h2);
+	hook::remove(h3);
 
-	printf("removing invalid hook returned: %s\n\n", (lilac_remove_hook(h1) ? "true" : "false"));
+	printf("removing invalid hook returned: %s\n\n", (hook::remove(h1) ? "true" : "false"));
 
 	to_hook("main");
 }

@@ -1,14 +1,7 @@
-#include "lilac_hook_impl.hpp"
+#include "impl.hpp"
 
-using namespace lilac;
-using namespace impl;
-
-namespace {
-	struct Handle {
-		const void* address;
-		const void* detour;
-	};
-}
+using namespace lilac::core;
+using namespace lilac::core::hook;
 
 void HookManager::add_trap(const void* address, char buffer[]) {
 	void* addr = const_cast<void*>(address);
@@ -110,7 +103,7 @@ bool HookManager::handler(Exception& info) {
 	return (find_in_hooks(info) || find_in_frames(info));
 }
 
-HookHandle HookManager::add_hook(const void* address, const void* detour) {
+hook::Handle HookManager::add_hook(const void* address, const void* detour) {
 	auto& hook = all_hooks[address];
 	
 	auto& detours = hook.detours;
@@ -130,11 +123,11 @@ HookHandle HookManager::add_hook(const void* address, const void* detour) {
 
 		detours.push_back(detour);
 
-		return new Handle{ address, detour };
+		return new HookManager::Handle{ address, detour };
 	}
 }
 
-bool HookManager::remove_hook(HookHandle handle) {
+bool HookManager::remove_hook(hook::Handle handle) {
 	auto& real = *static_cast<const Handle*>(handle);
 	auto pair = all_hooks.find(real.address);
 	if (pair != all_hooks.end()) {

@@ -1,21 +1,18 @@
-#include "lilac_hook_windows.hpp"
-#include "lilac_hook_impl.hpp"
+#include "windows.hpp"
+#include "impl.hpp"
 
 #include <Windows.h>
 
-using namespace lilac;
-using namespace impl;
+using namespace lilac::core::hook;
 
 namespace {
-	long __stdcall handler(EXCEPTION_POINTERS* info) {
-	#if defined(_WIN64) 
+	LONG WINAPI handler(EXCEPTION_POINTERS* info) {
+	#if defined(_WIN64)
 		const void* ret = *reinterpret_cast<void**>(info->ContextRecord->Rsp);
 		const void** current = reinterpret_cast<const void**>(&info->ContextRecord->Rip);
-
 	#elif defined(_WIN32)
 		const void* ret = *reinterpret_cast<void**>(info->ContextRecord->Esp);
 		const void** current = reinterpret_cast<const void**>(&info->ContextRecord->Eip);
-
 	#endif
 
 		Exception exception = {

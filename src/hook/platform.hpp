@@ -1,12 +1,10 @@
-#ifndef __LILAC_HOOK_PLATFORM_HPP__
-#define __LILAC_HOOK_PLATFORM_HPP__
+#ifndef LILAC_CORE_HOOK_PLATFORM_HPP
+#define LILAC_CORE_HOOK_PLATFORM_HPP
 
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */
-#include <cstddef>
-
-namespace lilac::impl {
+namespace lilac::core::hook {
 	template<typename T>
 	class Platform {
 	public:
@@ -36,4 +34,4 @@ namespace lilac::impl {
 	};
 }
 
-#endif /* __LILAC_HOOK_PLATFORM_HPP__ */
+#endif /* LILAC_CORE_HOOK_PLATFORM_HPP */
