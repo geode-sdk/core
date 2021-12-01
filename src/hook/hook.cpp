@@ -1,4 +1,4 @@
-#include "hook/hook.hpp"
+#include "../../include/lilac/core/hook/hook.hpp"
 #include "impl.hpp"
 
 using namespace lilac::core;
