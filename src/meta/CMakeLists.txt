@@ -7,4 +7,6 @@ target_compile_features(lilac_core_meta INTERFACE cxx_std_17)
 target_include_directories(
 	lilac_core_meta
 	INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+		lilac_utils
+		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+)

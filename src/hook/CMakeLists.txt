@@ -20,4 +20,6 @@ target_include_directories(
 	PRIVATE 
 		${CMAKE_SOURCE_DIR}/include/lilac/core
 	PUBLIC
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>)
+		lilac_utils
+		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+)

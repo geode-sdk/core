@@ -6,9 +6,9 @@
 #include <vector>
 #include <map>
 
-#if defined(LILAC_TARGET_WINDOWS)
+#if defined(LILAC_IS_WINDOWS)
 	#include "windows.hpp"
-#elif defined(LILAC_TARGET_MACOS)
+#elif defined(LILAC_IS_MACOS)
 	#include "macos.hpp"
 #endif
 

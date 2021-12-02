@@ -1,9 +1,9 @@
 #include <lilac/core/hook/hook.hpp>
 
-#if defined(LILAC_TARGET_WINDOWS)
+#if defined(LILAC_IS_WINDOWS)
 	#include <Windows.h>
 	#define NOINLINE __declspec(noinline)
-#elif defined(LILAC_TARGET_MACOS)
+#elif defined(LILAC_IS_MACOS)
 	#define NOINLINE __attribute__((noinline))
 #endif
 
