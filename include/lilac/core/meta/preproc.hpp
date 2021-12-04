@@ -4,7 +4,7 @@
 // for some reason cmake just doesn't want to 
 // include the lilac_utils subdirectories 
 // so i have to do this
-#include "../../../../utils/include/lilac/Platform.hpp"
+#include <lilac/Platform.hpp>
 
 namespace lilac::core::meta {
     #if defined(NDEBUG)
