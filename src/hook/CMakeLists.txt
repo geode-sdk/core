@@ -17,10 +17,10 @@ target_link_libraries(lilac_core_hook
 	lilac_utils
 )
 target_compile_features(lilac_core_hook PUBLIC cxx_std_17)
-target_include_directories(
-	lilac_core_hook 
-	PRIVATE 
+target_include_directories(lilac_core_hook 
+	PRIVATE
 		${CMAKE_SOURCE_DIR}/include/lilac/core
-	PUBLIC
+	INTERFACE
 		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/lilac>
 )
