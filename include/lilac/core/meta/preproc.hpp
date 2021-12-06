@@ -1,10 +1,7 @@
 #ifndef LILAC_CORE_META_PREPROC_HPP
 #define LILAC_CORE_META_PREPROC_HPP
 
-// for some reason cmake just doesn't want to 
-// include the lilac_utils subdirectories 
-// so i have to do this
-#include <lilac/Platform.hpp>
+#include "../macros/platform.hpp"
 
 namespace lilac::core::meta {
     #if defined(NDEBUG)
