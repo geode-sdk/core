@@ -32,6 +32,24 @@ namespace lilac::core::hook {
 	* false if removal failed.
 	*/
 	bool LILAC_CALL remove(Handle handle);
+
+	/**
+	 * @param address Address to write to
+	 * @param data Data to write
+	 * @param size Size of data
+	 * @returns True if succesfully written, 
+	 * false if not
+	 */
+	bool LILAC_CALL write_memory(void* address, void* data, size_t size);
+
+	/**
+	 * @param address Address to read from
+	 * @param data Where to write data
+	 * @param size How much data to read
+	 * @returns True if succesfully read, 
+	 * false if not
+	 */
+	bool LILAC_CALL read_memory(void* address, void* receive, size_t size);
 }
 
 #endif /* LILAC_CORE_HOOK_HPP */

@@ -16,8 +16,12 @@ namespace lilac::core::hook {
 			return sizeof(T::trap);
 		}
 
-		static void write_memory(void* to, const void* from, size_t size) {
+		static bool write_memory(void* to, const void* from, size_t size) {
 			return T::write_memory(to, from, size);
+		}
+
+		static bool read_memory(void* addr, void* to, size_t size) {
+			return T::write_memory(addr, to, size);
 		}
 
 		static bool initialize() {

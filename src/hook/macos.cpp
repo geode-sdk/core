@@ -26,13 +26,15 @@ namespace {
 	}
 }
 
-void MacOSX::write_memory(void* to, const void* from, size_t size) {
+bool MacOSX::write_memory(void* to, const void* from, size_t size) {
 	kern_return_t ret;
 	
 	ret = mach_vm_protect(mach_task_self(), (mach_vm_address_t)to, size, FALSE, VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
-	if (ret != KERN_SUCCESS) return;
+	if (ret != KERN_SUCCESS) return false;
 
 	ret = mach_vm_write(mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size);
+
+	return ret == KERN_SUCCESS;
 }
 
 bool MacOSX::initialize() {

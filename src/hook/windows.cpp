@@ -31,11 +31,16 @@ namespace {
 	}
 }
 
-void WindowsX86::write_memory(void* to, const void* from, size_t size) {
+bool WindowsX86::write_memory(void* to, const void* from, size_t size) {
 	DWORD old;
 	VirtualProtect(to, size, PAGE_EXECUTE_READWRITE, &old);
-	WriteProcessMemory(GetCurrentProcess(), to, from, size, nullptr);
+	auto res = WriteProcessMemory(GetCurrentProcess(), to, from, size, nullptr);
 	VirtualProtect(to, size, old, &old);
+	return res;
+}
+
+bool WindowsX86::read_memory(void* addr, void* to, size_t size) {
+	return ReadProcessMemory(GetCurrentProcess(), addr, to, size, nullptr);
 }
 
 bool WindowsX86::initialize() {
