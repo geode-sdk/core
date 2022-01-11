@@ -54,6 +54,7 @@ namespace lilac {
 	#define LILAC_PLATFORM_NAME "Windows"
 	#define LILAC_PLATFORM_TARGET PlatformID::Windows
 	#define LILAC_CALL __stdcall
+	#define LILAC_PLATFORM_EXTENSION ".dll"
 #else
 	#define LILAC_WINDOWS(...)
 #endif
@@ -68,6 +69,7 @@ namespace lilac {
 		#define LILAC_IS_DESKTOP
 		#define LILAC_PLATFORM_NAME "MacOS"
 		#define LILAC_PLATFORM_TARGET PlatformID::MacOS
+		#define LILAC_PLATFORM_EXTENSION ".dylib"
 	#elif TARGET_OS_IPHONE
 		#define LILAC_MACOS(...)
 		#define LILAC_IOS(...) __VA_ARGS__
@@ -75,6 +77,7 @@ namespace lilac {
 		#define LILAC_IS_MOBILE
 		#define LILAC_PLATFORM_NAME "iOS"
 		#define LILAC_PLATFORM_TARGET PlatformID::iOS
+		#define LILAC_PLATFORM_EXTENSION ".dylib"
 	#endif
 	#define LILAC_CALL
 #else
@@ -90,6 +93,7 @@ namespace lilac {
 	#define LILAC_PLATFORM_NAME "Android"
 	#define LILAC_PLATFORM_TARGET PlatformID::Android
 	#define LILAC_CALL
+	#define LILAC_PLATFORM_EXTENSION ".so"
 #else
 	#define LILAC_ANDROID(...)
 #endif
