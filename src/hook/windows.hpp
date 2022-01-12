@@ -13,7 +13,8 @@ namespace lilac::core::hook {
 	#endif
 
 	public:
-		static void write_memory(void* to, const void* from, size_t size);
+		static bool read_memory(void* addr, void* to, size_t size);
+		static bool write_memory(void* to, const void* from, size_t size);
 		static bool initialize();
 	};
 
