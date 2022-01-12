@@ -3,46 +3,11 @@
 
 #include "tuple.hpp"
 #include "common.hpp"
+#include "callconv.hpp"
 
 #include <type_traits>
 
 namespace lilac::core::meta {
-    /* CRTP class for creating calling conventions for Function.
-    * Provides some utilities for less verbose filtering of parameters.
-    */
-    template<class... Args>
-    class CallConv {
-    private:
-        using MyTuple = Tuple<Args...>;
-
-    protected:
-        template<
-            size_t i,
-            template<class> class Pred,
-            class Else
-        >
-        using type_if = 
-            typename ternary<
-                (MyTuple::size > i) &&
-                Pred<typename MyTuple::template type_at<i>>::value
-                >::template type<
-                        typename MyTuple::template type_at<i>,
-                        Else
-                    >;
-
-        template<
-            size_t i,
-            template<class> class Pred,
-            class Else
-        >
-        static decltype(auto) value_if(const MyTuple& tuple, const Else e) {
-            return ternary<
-                    (MyTuple::size > i) &&
-                    Pred<typename MyTuple::template type_at<i>>::value
-                >::val(tuple.template at<i>(), e);
-        }
-    };
-
     /* The Lilac Function class wraps functions with unconventional
     *  calling conventions (how ironic).
     */
@@ -75,7 +40,7 @@ namespace lilac::core::meta {
             return MyConv::invoke(
                 addr,
                 { all... },
-                typename MyTuple::template filter<MyConv::template filter>{}
+                typename MyTuple::template filter<MyConv::template filter> {}
             );
         }
     };

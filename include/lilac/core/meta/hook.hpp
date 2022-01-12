@@ -3,58 +3,81 @@
 
 #include "tuple.hpp"
 #include "common.hpp"
+#include "callconv.hpp"
+
+#include "../hook/hook.hpp"
 
 #include <type_traits>
 
 namespace lilac::core::meta {
     template<
         template<class, class...> class Conv,
-        auto address
+        auto address,
+        auto detour
     >
     class Hook {
-        static_assert(always_false<decltype(address)>, "Not a valid function pointer!");
+        static_assert(always_false<decltype(address)>, 
+            "Not a valid function pointer, or hook and detour aren't compatible!");
     };
-
+    
     template<
         template<class, class...> class Conv,
         class Ret,
         class... Args,
-        Ret(*address)(Args...)
+        Ret(* address)(Args...),
+        Ret(* detour)(Args...)
     >
-    class Hook<Conv, address> {
+    class Hook<Conv, address, detour> {
     private:
         using MyConv = Conv<Ret, Args...>;
         using MyTuple = Tuple<Args...>;
 
+        /* TODO: REMOVE THIS!!!
+        template<class>
+        class Wrapper;
+
+        template<class... RawArgs>
+        class Wrapper<Tuple<RawArgs...>> {
+        private:
+            using MyTuple = Tuple<RawArgs...>;
+
+            template<size_t... indices>
+            decltype(auto) get_impl(const std::index_sequence<indices...>&&) {
+                return [](RawArgs... raw_args) -> Ret {
+                    const MyTuple tuple = { raw_args... };
+                    return detour(tuple.template at<indices>()...);
+                };
+            }
+
+        public:
+            decltype(auto) get() {
+                return get_impl(
+                    typename MyTuple::template filter<MyConv::template filter>{}
+                );
+            }
+        };
+        */
     private:
-        std::conditional_t<
-            std::is_member_function_pointer_v<decltype(address)>,
-            decltype(address),
-            Ret(*)(Args...)
-        >
-         addr;
+        static inline lilac::core::hook::Handle handle;
 
     public:
-        Hook(Ret(*addr)(Args...))
-            : addr(addr) {
-            static_assert(
-                std::is_same_v<
-                    std::remove_cv_t<decltype(addr)>,
-                    std::remove_cv_t<Ret(*)(Args...)>
-                >,
-                "Hook and detour are not compatible!"
+        Hook() {
+            auto wrapper = MyConv::get_wrapper<detour>(
+                typename MyTuple::template filter<MyConv::template filter> {}
             );
-            // We need to invoke lilac_add_hook here
+            this->handle = lilac::core::hook::add(address, wrapper);
         }
     };
 
+    // member functions.
     template<
         template<class, class...> class Conv,
-        auto address,
-        class Ret, class Parent, class... Args
+        class Ret, class Parent, class... Args,
+        Ret(Parent::* address)(Args...),
+        Ret(Parent::* detour)(Args...)
     >
-    class Hook<Conv, address, Ret(Parent::*)(Args...)> {
-
+    class Hook<Conv, address, detour> {
+        // deal with this later lol
     };
 }
 

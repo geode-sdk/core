@@ -7,7 +7,8 @@
 #include "enum.hpp"
 
 namespace lilac {
-	struct PlatformID {
+	class PlatformID {
+	public:
 		enum {
 			Unknown = -1,
 			Windows,
@@ -17,22 +18,22 @@ namespace lilac {
 			Linux,
 		};
 		
-		using type = decltype(Unknown);
+		using Type = decltype(Unknown);
 
-		type m_value;
+		Type m_value;
 
-		PlatformID(type t) { m_value = t; }
-		PlatformID& operator=(type t) { m_value = t; }
+		PlatformID(Type t) { m_value = t; }
+		PlatformID& operator=(Type t) { m_value = t; }
 		bool operator==(int other) const { return m_value == other; }
 		bool operator==(PlatformID const& other) const { return m_value == other.m_value; }
 		operator int() { return m_value; }
 
 		template<class T>
-		static type cast(T t) {
-			return static_cast<type>(t);
+		static Type cast(T t) {
+			return static_cast<Type>(t);
 		}
 
-		static constexpr const char* toString(type lp) {
+		static constexpr const char* toString(Type lp) {
 			switch (lp) {
 				case Unknown: return "Unknown";
 				case Windows: return "Windows";
@@ -83,7 +84,7 @@ namespace lilac {
 #endif
 
 // Android
-#ifdef __ANDROID__
+#if defined(__ANDROID__)
 	#define LILAC_ANDROID(...) __VA_ARGS__
 	#define LILAC_IS_ANDROID
 	#define LILAC_IS_MOBILE
@@ -95,5 +96,5 @@ namespace lilac {
 #endif
 
 #ifndef LILAC_PLATFORM_NAME
-#error "Unsupported PlatformID!"
+	#error "Unsupported PlatformID!"
 #endif
