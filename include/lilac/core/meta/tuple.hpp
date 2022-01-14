@@ -33,6 +33,12 @@ namespace lilac::core::meta {
         constexpr decltype(auto) at() const {
             return 0;
         }
+
+    public:
+        template <class... Classes>
+        static auto make(Classes&&... values) {
+            return Tuple<Classes...>(values...);
+        }
     };
 
     template<class Current, class... Rest>
@@ -81,12 +87,19 @@ namespace lilac::core::meta {
                 return this->NextType::template at<i - 1>();
             }
         }
-    };
 
-    template <class... Classes>
-    auto make_tuple(Classes&&... values) {
-        return Tuple<Classes...>(values...);
-    }
+    protected:
+        template <auto func, size_t... seq>
+        constexpr decltype(auto) apply_impl(std::index_sequence<seq...>) const {
+            return func(template at<seq>()...);
+        }
+
+    public:
+        template <auto func>
+        constexpr decltype(auto) apply() {
+            return apply_impl<func>(std::make_index_sequence<size>());
+        }
+    };
 }
 
 #endif /* LILAC_CORE_META_TUPLE_HPP */
