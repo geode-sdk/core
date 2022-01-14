@@ -124,29 +124,20 @@ namespace lilac::core::meta::x86 {
                 typename MyConv::template type_if<1, gpr_passable, int>,
                 typename MyTuple::template type_at<indices>...
             ) = 
+                // Cacao be like:
                 [](
-                    typename MyConv::template type_if<0, sse_passable, float> f0,
-                    typename MyConv::template type_if<1, sse_passable, float> f1,
-                    typename MyConv::template type_if<2, sse_passable, float> f2,
-                    typename MyConv::template type_if<3, sse_passable, float> f3,
-                    float,
-                    float,
-                    typename MyConv::template type_if<0, gpr_passable, int> i0,
-                    typename MyConv::template type_if<1, gpr_passable, int> i1,
+                    auto f0, auto f1, auto f2, auto f3,
+                    float, float,
+                    auto i0, auto i1,
                     typename MyTuple::template type_at<indices>... rest
                 ) -> Ret {
                     /* Tuple<
-                        decltype(f0), 
-                        decltype(f1), 
-                        decltype(f2), 
-                        decltype(f3),
-                        float,
-                        float,
-                        decltype(i0), 
-                        decltype(i1), 
+                        decltype(f0), decltype(f1), decltype(f2), decltype(f3),
+                        float, float,
+                        decltype(i0), decltype(i1), 
                         decltype(rest)...
                     > all = { f0, f1, f2, f3, 1907.0f, 1907.0f, i0, i1, rest...}; */
-                    
+
                 };
         }
     };
