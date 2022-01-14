@@ -82,6 +82,11 @@ namespace lilac::core::meta {
             }
         }
     };
+
+    template <class... Classes>
+    auto make_tuple(Classes&&... values) {
+        return Tuple<Classes...>(values...);
+    }
 }
 
 #endif /* LILAC_CORE_META_TUPLE_HPP */

@@ -129,19 +129,13 @@ namespace lilac::core::meta::x86 {
                     auto f0, auto f1, auto f2, auto f3,
                     float, float,
                     auto i0, auto i1,
-                    typename MyTuple::template type_at<indices>... rest
-                ) -> Ret {
-                    /* Tuple<
-                        decltype(f0), decltype(f1), decltype(f2), decltype(f3),
-                        float, float,
-                        decltype(i0), decltype(i1), 
-                        decltype(rest)...
-                    > all = { f0, f1, f2, f3, 1907.0f, 1907.0f, i0, i1, rest...}; */
-
+                    auto... rest
+                ) {
+                    auto all = make_tuple(f0, f1, f2, f3, 1907.0f, 1907.0f, i0, i1, rest...);
+                    
                 };
         }
     };
-    }
 }
 
 #endif /* LILAC_CORE_META_OPTCALL_HPP */
