@@ -37,7 +37,7 @@ namespace lilac::core::meta {
     public:
         template <class... Classes>
         static auto make(Classes&&... values) {
-            return Tuple<Classes...>(values...);
+            return Tuple<Classes...> { values... };
         }
     };
 

@@ -39,8 +39,7 @@ namespace lilac::core::meta {
         decltype(auto) operator()(Args... all) const {
             return MyConv::invoke(
                 addr,
-                { all... },
-                typename MyTuple::template filter<MyConv::template filter> {}
+                { all... }
             );
         }
     };

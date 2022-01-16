@@ -41,6 +41,7 @@ namespace lilac::core::meta {
                 >::val(tuple.template at<i>(), e);
         }
 
+    /* TODO: REMOVE THIS!!
     public:
         template<size_t... indices>
         static Ret invoke(
@@ -56,7 +57,7 @@ namespace lilac::core::meta {
             const std::index_sequence<indices...>&&
         ) {
             return MyInherit::get_wrapper<detour, indices...>();
-        }
+        }*/
     };
 }
 

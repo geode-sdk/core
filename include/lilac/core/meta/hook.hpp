@@ -11,9 +11,9 @@
 
 namespace lilac::core::meta {
     template<
-        template<class, class...> class Conv,
         auto address,
-        auto detour
+        auto detour,
+        template<class, class...> class Conv
     >
     class Hook {
         static_assert(always_false<decltype(address)>, 
@@ -21,62 +21,35 @@ namespace lilac::core::meta {
     };
     
     template<
-        template<class, class...> class Conv,
         class Ret,
         class... Args,
         Ret(* address)(Args...),
-        Ret(* detour)(Args...)
+        Ret(* detour)(Args...),
+        template<class, class...> class Conv
     >
-    class Hook<Conv, address, detour> {
+    class Hook<address, detour, Conv> {
     private:
         using MyConv = Conv<Ret, Args...>;
         using MyTuple = Tuple<Args...>;
 
-        /* TODO: REMOVE THIS!!!
-        template<class>
-        class Wrapper;
-
-        template<class... RawArgs>
-        class Wrapper<Tuple<RawArgs...>> {
-        private:
-            using MyTuple = Tuple<RawArgs...>;
-
-            template<size_t... indices>
-            decltype(auto) get_impl(const std::index_sequence<indices...>&&) {
-                return [](RawArgs... raw_args) -> Ret {
-                    const MyTuple tuple = { raw_args... };
-                    return detour(tuple.template at<indices>()...);
-                };
-            }
-
-        public:
-            decltype(auto) get() {
-                return get_impl(
-                    typename MyTuple::template filter<MyConv::template filter>{}
-                );
-            }
-        };
-        */
     private:
         static inline lilac::core::hook::Handle handle;
 
     public:
         Hook() {
-            auto wrapper = MyConv::get_wrapper<detour>(
-                typename MyTuple::template filter<MyConv::template filter> {}
-            );
+            auto wrapper = MyConv::get_wrapper<detour>();
             this->handle = lilac::core::hook::add(address, wrapper);
         }
     };
 
     // member functions.
     template<
-        template<class, class...> class Conv,
         class Ret, class Parent, class... Args,
         Ret(Parent::* address)(Args...),
-        Ret(Parent::* detour)(Args...)
+        Ret(Parent::* detour)(Args...),
+        template<class, class...> class Conv
     >
-    class Hook<Conv, address, detour> {
+    class Hook<address, detour, Conv> {
         // deal with this later lol
     };
 }
