@@ -39,6 +39,11 @@ namespace lilac::core::meta {
         static auto make(Classes&&... values) {
             return Tuple<Classes...> { values... };
         }
+
+        template <class T>
+        auto append(T&& value) const {
+            return Tuple<T>(value);
+        }
     };
 
     template<class Current, class... Rest>
@@ -94,10 +99,20 @@ namespace lilac::core::meta {
             return func(template at<seq>()...);
         }
 
+        template <class T, size_t... seq>
+        constexpr decltype(auto) append_impl(std::index_sequence<seq...>, T& value) const {
+            return Tuple<>::make(at<seq>()..., value);
+        }
+
     public:
         template <auto func>
         constexpr decltype(auto) apply() {
             return apply_impl<func>(std::make_index_sequence<size>());
+        }
+
+        template <class T>
+        auto append(T& value) const {
+            return append_impl(std::make_index_sequence<size>(), value);
         }
     };
 }

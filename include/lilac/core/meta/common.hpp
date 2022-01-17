@@ -35,18 +35,6 @@ namespace lilac::core::meta {
 
     template<class... Classes>
     static constexpr bool always_false = false;
-
-    template<class Class>
-    class ValueWrapper {
-    private:
-        Class value;
-
-    public:
-        operator Class() { return value; }
-    };
-
-    template<>
-    class ValueWrapper<void> {};
 }
 
 #endif /* LILAC_CORE_META_COMMON_HPP */
