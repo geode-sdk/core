@@ -45,7 +45,7 @@ namespace lilac::core::meta::x86 {
                 : stack_offset + 6);
 
             // If our output index is greater than 6, it has to be on stack. Increment.
-            static constexpr size_t counter = stack_offset + size_t(bool(index >= 6));
+            static constexpr size_t counter = stack_offset + static_cast<size_t>(index >= 6);
         };
 
     private:
