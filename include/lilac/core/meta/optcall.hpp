@@ -12,10 +12,12 @@ namespace lilac::core::meta::x86 {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
         using MyConv = CallConv<Ret, Args...>;
+        // for some reason using definitions dont get inherited properly
+        using MyTuple = typename MyConv::MyTuple;
 
     private:
         // Filters that will be passed to Tuple::filter.
-        template <size_t i, class Current, size_t counter>
+        template <size_t i, class Current, size_t c>
         class filter_to {
         public:
             static constexpr bool result = 
@@ -23,7 +25,7 @@ namespace lilac::core::meta::x86 {
                 (!sse_passable<Current>::value || i > 3);
 
             static constexpr size_t index = i;
-            static constexpr size_t counter = counter;
+            static constexpr size_t counter = c;
         };
 
         template <size_t i, class Current, size_t stack_offset>
@@ -162,7 +164,7 @@ namespace lilac::core::meta::x86 {
 
         template <Ret(* detour)(Args...)>
         static decltype(auto) get_wrapper() {
-            return &MyImpl::wrapper<detour>;
+            return &MyImpl::template wrapper<detour>;
         }
     };
 }
