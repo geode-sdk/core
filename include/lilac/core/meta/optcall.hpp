@@ -8,10 +8,10 @@
 
 namespace lilac::core::meta::x86 {
     template <class Ret, class... Args>
-    class Optcall : public CallConv<Optcall, Ret, Args...> {
+    class Optcall : public CallConv<Ret, Args...> {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
-        using MyConv = CallConv<Optcall, Ret, Args...>;
+        using MyConv = CallConv<Ret, Args...>;
 
     private:
         // Filters that will be passed to Tuple::filter.
@@ -126,7 +126,7 @@ namespace lilac::core::meta::x86 {
                 float,
                 typename MyConv::template type_if<0, gpr_passable, int> i0,
                 typename MyConv::template type_if<1, gpr_passable, int> i1,
-                typename MyConv::MyTuple::template type_at<to>... rest
+                typename MyTuple::template type_at<to>... rest
             ) {
                 auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1, rest...);
                 if constexpr (!std::is_same_v<Ret, void>) {
@@ -150,8 +150,8 @@ namespace lilac::core::meta::x86 {
         // Putting it all together: instantiating Impl with our filters.
         using MyImpl = 
             Impl<
-                typename MyConv::MyTuple::template filter<filter_to>,
-                typename MyConv::MyTuple::template filter<filter_from>
+                typename MyTuple::template filter<filter_to>,
+                typename MyTuple::template filter<filter_from>
             >;
 
     public:
