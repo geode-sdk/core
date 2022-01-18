@@ -106,6 +106,34 @@ namespace lilac::core::meta::x86 {
                 }
             }
 
+            template <size_t index, size_t stack_offset, size_t... seq>
+            static constexpr auto gen_call_indices(std::index_sequence<seq...> ind) {
+                using type = typename MyTuple::template type_at<index>;
+                constexpr bool is_sse = sse_passable<type>::value;
+                constexpr bool is_gpr = gpr_passable<type>::value;
+                if constexpr (index == MyTuple::size) return ind;
+                else {
+                    constexpr auto stack_index = 6 + stack_offset;
+                    constexpr size_t target_index = 
+                        // can be xmm0, xmm1, ecx, edx or stack
+                        index <= 1 ? (is_sse ? index : is_gpr ? index + 4 : stack_index) :
+                        // can be either xmm2, xmm3 or stack
+                        index <= 3 ? (is_sse ? index : stack_index) :
+                        // is on stack
+                        stack_index + index - 4;
+                    constexpr auto next_offset = stack_offset + (index < 4 && !is_sse && (index > 1 || !is_gpr) ? 1 : 0);
+                    return gen_call_indices<index + 1, next_offset>(std::index_sequence<seq..., target_index>{});
+                }
+            }
+
+            using CallIndices = decltype(gen_call_indices<0, 0>(std::index_sequence<>{}));
+
+            // this is a terrible name, should this even be here
+            template <auto func, class T, size_t... seq>
+            static decltype(auto) apply_func_with_indices(T&& tuple, std::index_sequence<seq...>) {
+                return func(tuple.template at<seq>()...);
+            }
+
             template <Ret(* detour)(Args...)>
             static Ret __vectorcall wrapper_impl(
                 typename MyConv::template type_if<0, sse_passable, float> f0,
@@ -118,17 +146,16 @@ namespace lilac::core::meta::x86 {
                 typename MyConv::template type_if<1, gpr_passable, int> i1,
                 typename MyTuple::template type_at<to>... rest
             ) {
-                // We don't need to deal with rest here, since we will unconditionally pass them.
-                auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1);
+                auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1, rest...);
                 if constexpr (!std::is_same_v<Ret, void>) {
-                    Ret ret = detour(all.template at<from>()..., rest...);
+                    Ret ret = apply_func_with_indices<detour>(all, CallIndices{});
+                    // TODO: these stack fixes are sus
                     if constexpr (fix != 0) {
                         __asm sub esp, [fix]
                     }
                     return ret;
-                }
-                else {
-                    detour(all.template at<from>()..., rest...);
+                } else {
+                    apply_func_with_indices<detour>(all, CallIndices{});
                     if constexpr (fix != 0) {
                         __asm sub esp, [fix]
                     }

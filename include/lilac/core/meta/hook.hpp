@@ -38,7 +38,7 @@ namespace lilac::core::meta {
     public:
         Hook() {
             auto wrapper = MyConv::template get_wrapper<detour>();
-            this->handle = lilac::core::hook::add(address, wrapper);
+            this->handle = lilac::core::hook::add(reinterpret_cast<void*>(address), reinterpret_cast<void*>(wrapper));
         }
 
         static auto get_wrapper() {
