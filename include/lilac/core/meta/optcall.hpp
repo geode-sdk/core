@@ -7,7 +7,7 @@
 #include "x86.hpp"
 
 namespace lilac::core::meta::x86 {
-    template<class Ret, class... Args>
+    template <class Ret, class... Args>
     class Optcall : public CallConv<Optcall, Ret, Args...> {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
@@ -15,7 +15,7 @@ namespace lilac::core::meta::x86 {
 
     private:
         // Filters that will be passed to Tuple::filter.
-        template<size_t i, class Current, size_t counter>
+        template <size_t i, class Current, size_t counter>
         class filter_to {
         public:
             static constexpr bool result = 
@@ -26,7 +26,7 @@ namespace lilac::core::meta::x86 {
             static constexpr size_t counter = counter;
         };
 
-        template<size_t i, class Current, size_t stack_offset>
+        template <size_t i, class Current, size_t stack_offset>
         class filter_from {
         private:
             static constexpr bool sse = sse_passable<Current>::value && i <= 3;
@@ -50,14 +50,14 @@ namespace lilac::core::meta::x86 {
 
     private:
         // Where all the logic is actually implemented. Needs to be instantiated by Optcall, though.
-        template<class Class, class>
+        template <class Class, class>
         class Impl {
             static_assert(always_false<Class>, 
                 "Please report a bug to the Lilac developers! This should never be reached.\n"
                 "SFINAE didn't reach the right overload!");
         };
 
-        template<size_t... to, size_t... from>
+        template <size_t... to, size_t... from>
         class Impl<std::index_sequence<to...>, std::index_sequence<from...>> {
         private:
             static constexpr size_t fix =
@@ -160,7 +160,7 @@ namespace lilac::core::meta::x86 {
             return MyImpl::invoke(address, all);
         }
 
-        template<Ret(* detour)(Args...)>
+        template <Ret(* detour)(Args...)>
         static decltype(auto) get_wrapper() {
             return &MyImpl::wrapper<detour>;
         }

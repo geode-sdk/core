@@ -7,7 +7,7 @@ namespace lilac::core::meta {
     * some wrappers to require the custom calling convention to supply an
     * invoker and a way to get a wrapper for hooks.
     */
-    template<template<class, class...> class Inherit, class Ret, class... Args>
+    template <template <class, class...> class Inherit, class Ret, class... Args>
     class CallConv {
     private:
         using MyInherit = Inherit<Ret, Args...>;
@@ -15,9 +15,9 @@ namespace lilac::core::meta {
     protected:
         using MyTuple = Tuple<Args...>;
 
-        template<
+        template <
             size_t i,
-            template<class> class Pred,
+            template <class> class Pred,
             class Else
         >
         using type_if = 
@@ -29,9 +29,9 @@ namespace lilac::core::meta {
                         Else
                     >;
 
-        template<
+        template <
             size_t i,
-            template<class> class Pred,
+            template <class> class Pred,
             class Else
         >
         static decltype(auto) value_if(const MyTuple& tuple, const Else e) {
@@ -43,7 +43,7 @@ namespace lilac::core::meta {
 
     /* TODO: REMOVE THIS!!
     public:
-        template<size_t... indices>
+        template <size_t... indices>
         static Ret invoke(
             Ret(* address)(Args...), 
             const MyTuple&& tuple,
@@ -52,7 +52,7 @@ namespace lilac::core::meta {
             return MyInherit::invoke<indices...>(address, tuple);
         }
 
-        template<Ret(* detour)(Args...), size_t... indices>
+        template <Ret(* detour)(Args...), size_t... indices>
         static decltype(auto) get_wrapper(
             const std::index_sequence<indices...>&&
         ) {

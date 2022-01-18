@@ -11,15 +11,15 @@ namespace lilac::core::meta {
     * used for static reflection in function wrapping. Other applications will
     * usually be better covered by std::tuple.
     */
-    template<class... Classes>
+    template <class... Classes>
     class Tuple;
 
-    template<>
+    template <>
     class Tuple<> {
     protected:
         // Haskell
-        template<
-            template<size_t, class, size_t> class,
+        template <
+            template <size_t, class, size_t> class,
             size_t, size_t, size_t... seq
         >
         class filter_impl {
@@ -30,10 +30,10 @@ namespace lilac::core::meta {
     public:
         static constexpr size_t size = 0;
 
-        template<size_t>
+        template <size_t>
         using type_at = void;
 
-        template<size_t>
+        template <size_t>
         constexpr decltype(auto) at() const {
             return 0;
         }
@@ -50,7 +50,7 @@ namespace lilac::core::meta {
         }
     };
 
-    template<class Current, class... Rest>
+    template <class Current, class... Rest>
     class Tuple<Current, Rest...> : public Tuple<Rest...> {
     private:
         using ThisType = Tuple<Current, Rest...>;
@@ -60,8 +60,8 @@ namespace lilac::core::meta {
 
     protected:
         // Haskell
-        template<
-            template<size_t, class, size_t> class Pred, 
+        template <
+            template <size_t, class, size_t> class Pred, 
             size_t i, size_t counter, size_t... seq
         >
         class filter_impl {
@@ -81,12 +81,12 @@ namespace lilac::core::meta {
         };
         
     public:
-        template<template<size_t, class, size_t> class Pred>
+        template <template <size_t, class, size_t> class Pred>
         using filter = typename filter_impl<Pred, 0, 0>::result;
 
         static constexpr size_t size = sizeof...(Rest) + 1;
 
-        template<size_t i>
+        template <size_t i>
         using type_at = typename ternary<i == 0>
             ::template type<
                 Current,
@@ -98,7 +98,7 @@ namespace lilac::core::meta {
             NextType(rest...),
             value(value) {}
 
-        template<size_t i>
+        template <size_t i>
         constexpr decltype(auto) at() const {
             if constexpr (i == 0) {
                 return value;

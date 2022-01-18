@@ -45,7 +45,7 @@ void hook1(const char* str) {
 	}
 }
 
-template<class A, class B>
+template <class A, class B>
 decltype(auto) add_hook(A func, B hook) {
 	return lilac::core::hook::add((void*)func, (void*)hook);
 }

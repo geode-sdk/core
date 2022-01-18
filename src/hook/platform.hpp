@@ -5,7 +5,7 @@
 * in a different header to avoid cyclic dependencies
 */
 namespace lilac::core::hook {
-	template<typename T>
+	template <typename T>
 	class Platform {
 	public:
 		static constexpr const char* get_trap() {
