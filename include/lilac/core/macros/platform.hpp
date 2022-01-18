@@ -23,7 +23,7 @@ namespace lilac {
 		Type m_value;
 
 		PlatformID(Type t) { m_value = t; }
-		PlatformID& operator=(Type t) { m_value = t; }
+		PlatformID& operator=(Type t) { m_value = t; return *this; }
 		bool operator==(int other) const { return m_value == other; }
 		bool operator==(PlatformID const& other) const { return m_value == other.m_value; }
 		operator int() { return m_value; }

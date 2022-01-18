@@ -96,7 +96,7 @@ namespace lilac::core::meta {
     protected:
         template <auto func, size_t... seq>
         constexpr decltype(auto) apply_impl(std::index_sequence<seq...>) const {
-            return func(template at<seq>()...);
+            return func(at<seq>()...);
         }
 
         template <class T, size_t... seq>

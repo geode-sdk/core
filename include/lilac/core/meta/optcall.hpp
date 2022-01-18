@@ -14,6 +14,7 @@ namespace lilac::core::meta::x86 {
         class FilterOut {};
 
         using MyConv = CallConv<Optcall, Ret, Args...>;
+        using MyTuple = typename MyConv::MyTuple;
         using MyTupleFrom = 
             Tuple<
                 typename MyConv::template type_if<0, sse_passable, FilterOut>,
@@ -105,44 +106,38 @@ namespace lilac::core::meta::x86 {
                 }
             }
 
-            template<Ret(* detour)(Args...)>
-            static decltype(auto) get_wrapper() {
-                Ret(__vectorcall* wrapper)(
-                    typename MyConv::template type_if<0, sse_passable, float>,
-                    typename MyConv::template type_if<1, sse_passable, float>,
-                    typename MyConv::template type_if<2, sse_passable, float>,
-                    typename MyConv::template type_if<3, sse_passable, float>,
-                    float,
-                    float,
-                    typename MyConv::template type_if<0, gpr_passable, int>,
-                    typename MyConv::template type_if<1, gpr_passable, int>,
-                    typename MyTuple::template type_at<to>...
-                ) = 
-                    // Cacao be like:
-                    [](
-                        auto f0, auto f1, auto f2, auto f3,
-                        float, float,
-                        auto i0, auto i1,
-                        auto... rest
-                    ) -> Ret {
-                        // We don't need to deal with rest here, since we will unconditionally pass them.
-                        auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1);
-                        if constexpr (!std::is_same_v<Ret, void>) {
-                            Ret ret = detour(all.template at<from>()..., rest...);
-                            if constexpr (fix != 0) {
-                                __asm sub esp, [fix]
-                            }
-                            return ret;
-                        }
-                        else {
-                            detour(all.template at<from>()..., rest...);
-                            if constexpr (fix != 0) {
-                                __asm sub esp, [fix]
-                            }
-                        }
-                    };
+            template <Ret(* detour)(Args...)>
+            static Ret __vectorcall wrapper_impl(
+                typename MyConv::template type_if<0, sse_passable, float> f0,
+                typename MyConv::template type_if<1, sse_passable, float> f1,
+                typename MyConv::template type_if<2, sse_passable, float> f2,
+                typename MyConv::template type_if<3, sse_passable, float> f3,
+                float,
+                float,
+                typename MyConv::template type_if<0, gpr_passable, int> i0,
+                typename MyConv::template type_if<1, gpr_passable, int> i1,
+                typename MyTuple::template type_at<to>... rest
+            ) {
+                // We don't need to deal with rest here, since we will unconditionally pass them.
+                auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1);
+                if constexpr (!std::is_same_v<Ret, void>) {
+                    Ret ret = detour(all.template at<from>()..., rest...);
+                    if constexpr (fix != 0) {
+                        __asm sub esp, [fix]
+                    }
+                    return ret;
+                }
+                else {
+                    detour(all.template at<from>()..., rest...);
+                    if constexpr (fix != 0) {
+                        __asm sub esp, [fix]
+                    }
+                }
+            }
 
-                return wrapper;
+            template <Ret(* detour)(Args...)>
+            static decltype(auto) get_wrapper() {
+                return &wrapper_impl<detour>;
             }
         };
 
@@ -162,7 +157,7 @@ namespace lilac::core::meta::x86 {
 
         template<Ret(* detour)(Args...)>
         static decltype(auto) get_wrapper() {
-            return MyImpl::get_wrapper<detour>();
+            return MyImpl::template get_wrapper<detour>();
         }
     };
 }

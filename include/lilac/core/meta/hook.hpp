@@ -23,7 +23,7 @@ namespace lilac::core::meta {
     template<
         class Ret,
         class... Args,
-        Ret(* address)(Args...),
+        auto address,
         Ret(* detour)(Args...),
         template<class, class...> class Conv
     >
@@ -37,8 +37,12 @@ namespace lilac::core::meta {
 
     public:
         Hook() {
-            auto wrapper = MyConv::get_wrapper<detour>();
+            auto wrapper = MyConv::template get_wrapper<detour>();
             this->handle = lilac::core::hook::add(address, wrapper);
+        }
+
+        static auto get_wrapper() {
+            return MyConv::template get_wrapper<detour>();
         }
     };
 
