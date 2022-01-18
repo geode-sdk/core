@@ -11,32 +11,41 @@ namespace lilac::core::meta::x86 {
     class Optcall : public CallConv<Optcall, Ret, Args...> {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
-        class FilterOut {};
-
         using MyConv = CallConv<Optcall, Ret, Args...>;
-        using MyTuple = typename MyConv::MyTuple;
-        using MyTupleFrom = 
-            Tuple<
-                typename MyConv::template type_if<0, sse_passable, FilterOut>,
-                typename MyConv::template type_if<1, sse_passable, FilterOut>,
-                typename MyConv::template type_if<2, sse_passable, FilterOut>,
-                typename MyConv::template type_if<3, sse_passable, FilterOut>,
-                typename MyConv::template type_if<0, gpr_passable, FilterOut>,
-                typename MyConv::template type_if<1, gpr_passable, FilterOut>
-            >;
 
     private:
         // Filters that will be passed to Tuple::filter.
-        template<size_t i, class Current>
-        struct filter_to {
-            static constexpr bool value = 
+        template<size_t i, class Current, size_t counter>
+        class filter_to {
+        public:
+            static constexpr bool result = 
                 (!gpr_passable<Current>::value || i > 1) &&
                 (!sse_passable<Current>::value || i > 3);
+
+            static constexpr size_t index = i;
+            static constexpr size_t counter = counter;
         };
 
-        template<size_t i, class Current>
-        struct filter_from {
-            static constexpr bool value = !std::is_same_v<Current, FilterOut>;
+        template<size_t i, class Current, size_t stack_offset>
+        class filter_from {
+        private:
+            static constexpr bool sse = sse_passable<Current>::value && i <= 3;
+            static constexpr bool gpr = gpr_passable<Current>::value && i <= 1;
+
+        public:
+            // We're not even really filtering, just reordering.
+            static constexpr bool result = true;
+
+            static constexpr size_t index = 
+                // If in SSE, retain index
+                sse ? i
+                // If in GPR, offset by 4 (4 SSE registers available)
+                : (gpr ? i + 4
+                // If on stack, offset by 6 (4 SSE + 2 GPR registers available)
+                : stack_offset + 6);
+
+            // If our output index is greater than 6, it has to be on stack. Increment.
+            static constexpr size_t counter = stack_offset + size_t(bool(index >= 6));
         };
 
     private:
@@ -44,7 +53,8 @@ namespace lilac::core::meta::x86 {
         template<class Class, class>
         class Impl {
             static_assert(always_false<Class>, 
-                "Please report a bug to the Lilac developers! This should never be reached.");
+                "Please report a bug to the Lilac developers! This should never be reached.\n"
+                "SFINAE didn't reach the right overload!");
         };
 
         template<size_t... to, size_t... from>
@@ -106,36 +116,8 @@ namespace lilac::core::meta::x86 {
                 }
             }
 
-            template <size_t index, size_t stack_offset, size_t... seq>
-            static constexpr auto gen_call_indices(std::index_sequence<seq...> ind) {
-                using type = typename MyTuple::template type_at<index>;
-                constexpr bool is_sse = sse_passable<type>::value;
-                constexpr bool is_gpr = gpr_passable<type>::value;
-                if constexpr (index == MyTuple::size) return ind;
-                else {
-                    constexpr auto stack_index = 6 + stack_offset;
-                    constexpr size_t target_index = 
-                        // can be xmm0, xmm1, ecx, edx or stack
-                        index <= 1 ? (is_sse ? index : is_gpr ? index + 4 : stack_index) :
-                        // can be either xmm2, xmm3 or stack
-                        index <= 3 ? (is_sse ? index : stack_index) :
-                        // is on stack
-                        stack_index + index - 4;
-                    constexpr auto next_offset = stack_offset + (index < 4 && !is_sse && (index > 1 || !is_gpr) ? 1 : 0);
-                    return gen_call_indices<index + 1, next_offset>(std::index_sequence<seq..., target_index>{});
-                }
-            }
-
-            using CallIndices = decltype(gen_call_indices<0, 0>(std::index_sequence<>{}));
-
-            // this is a terrible name, should this even be here
-            template <auto func, class T, size_t... seq>
-            static decltype(auto) apply_func_with_indices(T&& tuple, std::index_sequence<seq...>) {
-                return func(tuple.template at<seq>()...);
-            }
-
             template <Ret(* detour)(Args...)>
-            static Ret __vectorcall wrapper_impl(
+            static Ret __vectorcall wrapper(
                 typename MyConv::template type_if<0, sse_passable, float> f0,
                 typename MyConv::template type_if<1, sse_passable, float> f1,
                 typename MyConv::template type_if<2, sse_passable, float> f2,
@@ -144,27 +126,23 @@ namespace lilac::core::meta::x86 {
                 float,
                 typename MyConv::template type_if<0, gpr_passable, int> i0,
                 typename MyConv::template type_if<1, gpr_passable, int> i1,
-                typename MyTuple::template type_at<to>... rest
+                typename MyConv::MyTuple::template type_at<to>... rest
             ) {
                 auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1, rest...);
                 if constexpr (!std::is_same_v<Ret, void>) {
-                    Ret ret = apply_func_with_indices<detour>(all, CallIndices{});
-                    // TODO: these stack fixes are sus
+                    Ret ret = detour(all.template at<from>()...);
+                    // TODO: These stack fixes are sus
+                    // Are they really though Mat? It's just the opposite of wrapping to the call.
                     if constexpr (fix != 0) {
                         __asm sub esp, [fix]
                     }
                     return ret;
                 } else {
-                    apply_func_with_indices<detour>(all, CallIndices{});
+                    detour(all.template at<from>()...);
                     if constexpr (fix != 0) {
                         __asm sub esp, [fix]
                     }
                 }
-            }
-
-            template <Ret(* detour)(Args...)>
-            static decltype(auto) get_wrapper() {
-                return &wrapper_impl<detour>;
             }
         };
 
@@ -173,7 +151,7 @@ namespace lilac::core::meta::x86 {
         using MyImpl = 
             Impl<
                 typename MyConv::MyTuple::template filter<filter_to>,
-                typename MyTupleFrom::template filter<filter_from>
+                typename MyConv::MyTuple::template filter<filter_from>
             >;
 
     public:
@@ -184,7 +162,7 @@ namespace lilac::core::meta::x86 {
 
         template<Ret(* detour)(Args...)>
         static decltype(auto) get_wrapper() {
-            return MyImpl::template get_wrapper<detour>();
+            return &MyImpl::wrapper<detour>;
         }
     };
 }

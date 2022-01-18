@@ -23,6 +23,7 @@ namespace lilac::core::meta {
     template<
         class Ret,
         class... Args,
+        // TODO: Fix this!!! I hate type qualifiers.
         auto address,
         Ret(* detour)(Args...),
         template<class, class...> class Conv
@@ -38,7 +39,7 @@ namespace lilac::core::meta {
     public:
         Hook() {
             auto wrapper = MyConv::template get_wrapper<detour>();
-            this->handle = lilac::core::hook::add(reinterpret_cast<void*>(address), reinterpret_cast<void*>(wrapper));
+            this->handle = lilac::core::hook::add(reinterpret_cast<void*>(address), wrapper);
         }
 
         static auto get_wrapper() {

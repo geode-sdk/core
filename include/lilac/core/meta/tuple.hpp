@@ -18,8 +18,12 @@ namespace lilac::core::meta {
     class Tuple<> {
     protected:
         // Haskell
-        template<template<size_t, class> class, size_t, size_t... seq>
-        struct filter_impl {
+        template<
+            template<size_t, class, size_t> class,
+            size_t, size_t, size_t... seq
+        >
+        class filter_impl {
+        public:
             using result = std::index_sequence<seq...>;
         };
 
@@ -56,18 +60,29 @@ namespace lilac::core::meta {
 
     protected:
         // Haskell
-        template<template<size_t, class> class Pred, size_t i, size_t... seq>
-        struct filter_impl {
-            using result = typename ternary<Pred<i, Current>::value>
+        template<
+            template<size_t, class, size_t> class Pred, 
+            size_t i, size_t counter, size_t... seq
+        >
+        class filter_impl {
+        private:
+            using MyPred = Pred<i, Current, counter>;
+        
+        public:
+            using result = typename ternary<MyPred::result>
                 ::template type<
-                    typename NextType::template filter_impl<Pred, i + 1, seq..., i>::result,
-                    typename NextType::template filter_impl<Pred, i + 1, seq...>::result
+                    typename NextType::template filter_impl<
+                        Pred, i + 1, MyPred::counter, seq..., MyPred::index
+                    >::result,
+                    typename NextType::template filter_impl<
+                        Pred, i + 1, counter, seq...
+                    >::result
                 >;
         };
         
     public:
-        template<template<size_t, class> class Pred>
-        using filter = typename filter_impl<Pred, 0>::result;
+        template<template<size_t, class, size_t> class Pred>
+        using filter = typename filter_impl<Pred, 0, 0>::result;
 
         static constexpr size_t size = sizeof...(Rest) + 1;
 
@@ -91,28 +106,6 @@ namespace lilac::core::meta {
             else {
                 return this->NextType::template at<i - 1>();
             }
-        }
-
-    protected:
-        template <auto func, size_t... seq>
-        constexpr decltype(auto) apply_impl(std::index_sequence<seq...>) const {
-            return func(at<seq>()...);
-        }
-
-        template <class T, size_t... seq>
-        constexpr decltype(auto) append_impl(std::index_sequence<seq...>, T& value) const {
-            return Tuple<>::make(at<seq>()..., value);
-        }
-
-    public:
-        template <auto func>
-        constexpr decltype(auto) apply() {
-            return apply_impl<func>(std::make_index_sequence<size>());
-        }
-
-        template <class T>
-        auto append(T& value) const {
-            return append_impl(std::make_index_sequence<size>(), value);
         }
     };
 }

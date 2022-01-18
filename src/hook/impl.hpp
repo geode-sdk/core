@@ -1,7 +1,7 @@
 #ifndef LILAC_CORE_HOOK_IMPL_HPP
 #define LILAC_CORE_HOOK_IMPL_HPP
 
-#include "../../include/lilac/core/hook/hook.hpp"
+#include <hook.hpp>
 
 #include <vector>
 #include <map>
