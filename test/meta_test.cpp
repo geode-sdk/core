@@ -1,6 +1,7 @@
 #include <geode/core/meta/function.hpp>
 #include <geode/core/meta/hook.hpp>
 #include <geode/core/meta/optcall.hpp>
+#include <geode/core/meta/thiscall.hpp>
 #include <iostream>
 #include <string>
 
@@ -28,14 +29,20 @@ int hook1(int x) {
 }
 
 std::string optcall_test(float a, int b, int c, float d, float e) {
-    std::cout << "xmm0 " << a << std::endl;
-    std::cout << "edx " << b << std::endl;
-    std::cout << "stack 0 " << c << std::endl;
-    std::cout << "xmm3 " << d << std::endl;
-    std::cout << "stack 1 " << e << std::endl;
+    std::cout << "xmm0 " << a << '\n';
+    std::cout << "edx " << b << '\n';
+    std::cout << "stack 0 " << c << '\n';
+    std::cout << "xmm3 " << d << '\n';
+    std::cout << "stack 1 " << e << '\n';
     return std::string("hello ") + std::to_string(e);
 }
 
+
+std::string thiscall_test(int ecx, float stack) {
+    std::cout << "ecx " << ecx << '\n';
+    std::cout << "stack " << stack << '\n';
+    return std::string("lol");
+}
 
 int main() {
     meta::Hook<&to_hook, &hook1, meta::x86::Optcall> hook;
@@ -48,7 +55,7 @@ int main() {
     to_hook(6);
     to_hook(24);
 
-    auto wrapper = meta::Hook<&to_hook, &optcall_test, meta::x86::Optcall>::get_wrapper();
+    auto optcall = meta::Hook<&to_hook, &optcall_test, meta::x86::Optcall>::get_wrapper();
     // expected:
     // xmm0 0.123
     // edx 123
@@ -62,8 +69,12 @@ int main() {
         mov edx, 123
         movss xmm3, f3
     }
-    auto result = wrapper(420, 1337.f);
-    std::cout << "wrapper returned \"" << result << '"' << std::endl;
+    auto optcall_ret = optcall(420, 1337.f);
+    std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n";
+
+    auto thiscall = meta::Hook<&to_hook, &thiscall_test, meta::x86::Thiscall>::get_wrapper();
+    auto thiscall_ret = thiscall(222, 341.0f);
+    std::cout << "thiscall wrapper returned \"" << thiscall_ret << "\"\n";
     
     //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
     //std::cout << "another result \"" << result << '"' << std::endl;

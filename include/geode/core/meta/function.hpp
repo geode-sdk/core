@@ -39,7 +39,7 @@ namespace geode::core::meta {
         decltype(auto) operator()(Args... all) const {
             return MyConv::invoke(
                 addr,
-                { all... }
+                all...
             );
         }
     };

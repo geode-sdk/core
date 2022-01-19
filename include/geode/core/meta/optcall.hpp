@@ -1,8 +1,6 @@
 #ifndef GEODE_CORE_META_OPTCALL_HPP
 #define GEODE_CORE_META_OPTCALL_HPP
 
-#include "function.hpp"
-#include "hook.hpp"
 #include "tuple.hpp"
 #include "x86.hpp"
 
@@ -65,23 +63,7 @@ namespace geode::core::meta::x86 {
             static constexpr size_t fix =
                 (std::is_class_v<Ret> ? stack_fix<Ret> : 0)
                 + stack_fix<typename MyTuple::template type_at<to>...>;
-
-            template <class From, class To>
-            class Register {
-            public:
-                From raw;
-
-            public:
-                To get() {
-                    union {
-                        From from;
-                        To to;
-                    } u;
-                    u.from = raw;
-                    return u.to;
-                }
-            };
-
+                
         public:
             static Ret invoke(void* address, const Tuple<Args...>& all) {
                 Ret(__vectorcall* raw)(
@@ -175,8 +157,8 @@ namespace geode::core::meta::x86 {
 
     public:
         // Just wrapping MyImpl.
-        static Ret invoke(void* address, const Tuple<Args...>& all) {
-            return MyImpl::invoke(address, all);
+        static Ret invoke(void* address, Args... all) {
+            return MyImpl::invoke(address, { all... });
         }
 
         template <Ret(* detour)(Args...)>

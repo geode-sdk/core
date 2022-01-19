@@ -24,7 +24,6 @@ namespace geode::core::meta::x86 {
                 float, double
             >;
     };
-
     
     template <class... Stack>
     static constexpr size_t stack_fix = 
@@ -37,6 +36,25 @@ namespace geode::core::meta::x86 {
 
     template <>
     static constexpr size_t stack_fix<void> = 0;
+
+    template <class From, class To>
+    class Register {
+    public:
+        From raw;
+
+    public:
+        To get() {
+            static_assert(sizeof(From) >= sizeof(To), 
+                "Please report a bug to the Geode developers! This should never be reached.\n"
+                "Size of Register is smaller than the size of the destination type!");
+            union {
+                From from;
+                To to;
+            } u;
+            u.from = raw;
+            return u.to;
+        }
+    };
 }
 
 #endif /* GEODE_CORE_META_X86_HPP */
