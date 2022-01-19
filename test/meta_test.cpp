@@ -55,9 +55,16 @@ int main() {
     // stack 0 420
     // xmm3 3.123
     // stack 1 1337
-    auto result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1337.f);
+    float f0 = 0.123f;
+    float f3 = 3.123f;
+    __asm {
+        movss xmm0, f0
+        mov edx, 123
+        movss xmm3, f3
+    }
+    auto result = wrapper(420, 1337.f);
     std::cout << "wrapper returned \"" << result << '"' << std::endl;
     
-    result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
-    std::cout << "another result \"" << result << '"' << std::endl;
+    //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
+    //std::cout << "another result \"" << result << '"' << std::endl;
 }

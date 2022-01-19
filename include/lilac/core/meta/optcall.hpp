@@ -66,6 +66,22 @@ namespace lilac::core::meta::x86 {
                 (std::is_class_v<Ret> ? stack_fix<Ret> : 0)
                 + stack_fix<typename MyTuple::template type_at<to>...>;
 
+            template <class From, class To>
+            class Register {
+            public:
+                From raw;
+
+            public:
+                To get() {
+                    union {
+                        From from;
+                        To to;
+                    } u;
+                    u.from = raw;
+                    return u.to;
+                }
+            };
+
         public:
             static Ret invoke(void* address, const Tuple<Args...>& all) {
                 Ret(__vectorcall* raw)(
@@ -119,32 +135,33 @@ namespace lilac::core::meta::x86 {
             }
 
             template <Ret(* detour)(Args...)>
-            static Ret __vectorcall wrapper(
-                typename MyConv::template type_if<0, sse_passable, float> f0,
-                typename MyConv::template type_if<1, sse_passable, float> f1,
-                typename MyConv::template type_if<2, sse_passable, float> f2,
-                typename MyConv::template type_if<3, sse_passable, float> f3,
-                float,
-                float,
-                typename MyConv::template type_if<0, gpr_passable, int> i0,
-                typename MyConv::template type_if<1, gpr_passable, int> i1,
+            static Ret __cdecl wrapper(
                 typename MyTuple::template type_at<to>... rest
             ) {
-                auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1, rest...);
-                if constexpr (!std::is_same_v<Ret, void>) {
-                    Ret ret = detour(all.template at<from>()...);
-                    // TODO: These stack fixes are sus
-                    // Are they really though Mat? It's just the opposite of wrapping to the call.
-                    if constexpr (fix != 0) {
-                        __asm sub esp, [fix]
-                    }
-                    return ret;
-                } else {
-                    detour(all.template at<from>()...);
-                    if constexpr (fix != 0) {
-                        __asm sub esp, [fix]
-                    }
+                Register<double, typename MyConv::template type_if<0, sse_passable, float>> f0;
+                Register<double, typename MyConv::template type_if<1, sse_passable, float>> f1;
+                Register<double, typename MyConv::template type_if<2, sse_passable, float>> f2;
+                Register<double, typename MyConv::template type_if<3, sse_passable, float>> f3;
+                
+                Register<void*, typename MyConv::template type_if<0, gpr_passable, int>> i0;
+                Register<void*, typename MyConv::template type_if<1, gpr_passable, int>> i1;
+
+                __asm {
+                    movlpd f0, xmm0
+                    movlpd f1, xmm1
+                    movlpd f2, xmm2
+                    movlpd f3, xmm3
+                    
+                    mov i0, ecx
+                    mov i1, edx
                 }
+
+                auto all = Tuple<>::make(
+                    f0.get(), f1.get(), f2.get(), f3.get(), 
+                    i0.get(), i1.get(), rest...
+                );
+
+                return detour(all.template at<from>()...);
             }
         };
 
