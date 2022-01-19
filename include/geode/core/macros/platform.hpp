@@ -6,46 +6,46 @@
 
 #include "enum.hpp"
 
-namespace geode {
-	class PlatformID {
-	public:
-		enum {
-			Unknown = -1,
-			Windows,
-			MacOS,
-			iOS,
-			Android,
-			Linux,
-		};
+// namespace geode {
+// 	class PlatformID {
+// 	public:
+// 		enum {
+// 			Unknown = -1,
+// 			Windows,
+// 			MacOS,
+// 			iOS,
+// 			Android,
+// 			Linux,
+// 		};
 		
-		using Type = decltype(Unknown);
+// 		using Type = decltype(Unknown);
 
-		Type m_value;
+// 		Type m_value;
 
-		PlatformID(Type t) { m_value = t; }
-		PlatformID& operator=(Type t) { m_value = t; return *this; }
-		bool operator==(int other) const { return m_value == other; }
-		bool operator==(PlatformID const& other) const { return m_value == other.m_value; }
-		operator int() { return m_value; }
+// 		PlatformID(Type t) { m_value = t; }
+// 		PlatformID& operator=(Type t) { m_value = t; return *this; }
+// 		bool operator==(int other) const { return m_value == other; }
+// 		bool operator==(PlatformID const& other) const { return m_value == other.m_value; }
+// 		operator int() { return m_value; }
 
-		template<class T>
-		static Type cast(T t) {
-			return static_cast<Type>(t);
-		}
+// 		template<class T>
+// 		static Type cast(T t) {
+// 			return static_cast<Type>(t);
+// 		}
 
-		static constexpr const char* toString(Type lp) {
-			switch (lp) {
-				case Unknown: return "Unknown";
-				case Windows: return "Windows";
-				case MacOS:   return "MacOS";
-				case iOS:     return "iOS";
-				case Android: return "Android";
-				case Linux:   return "Linux";
-			}
-			return "Undefined";
-		}
-	};
-}
+// 		static constexpr const char* toString(Type lp) {
+// 			switch (lp) {
+// 				case Unknown: return "Unknown";
+// 				case Windows: return "Windows";
+// 				case MacOS:   return "MacOS";
+// 				case iOS:     return "iOS";
+// 				case Android: return "Android";
+// 				case Linux:   return "Linux";
+// 			}
+// 			return "Undefined";
+// 		}
+// 	};
+// }
 
 // Windows
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)

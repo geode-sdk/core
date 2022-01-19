@@ -20,8 +20,8 @@ endif()
 target_compile_features(geode_core_hook PUBLIC cxx_std_17)
 target_include_directories(geode_core_hook 
 	PRIVATE
-		${CMAKE_SOURCE_DIR}/include/geode/core/hook
+		${geode_core_SOURCE_DIR}/include/geode/core/hook
 	INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/geode>
+		$<BUILD_INTERFACE:${geode_core_SOURCE_DIR}/include>
+		$<BUILD_INTERFACE:${geode_core_SOURCE_DIR}/include/geode>
 )
