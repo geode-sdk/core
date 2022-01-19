@@ -13,6 +13,7 @@ endif()
 
 target_include_directories(
 	geode_core_hook INTERFACE 
-	"include/geode"
-	"include/geode/core"
+	${geode_core_SOURCE_DIR}/include/geode
+	${geode_core_SOURCE_DIR}/include/geode/core
+	${geode_core_SOURCE_DIR}/include/geode/core/hook
 )

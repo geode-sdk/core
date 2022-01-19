@@ -4,10 +4,11 @@
 
 // Set dllexport/dllimport to geode classes & functions
 #ifdef GEODE_EXPORTING
-    #define GEODE_DLL    __declspec(dllexport)
+    #define GEODE_DLL    GEODE_WINDOWS(__declspec(dllexport))
 #else
-    #define GEODE_DLL    __declspec(dllimport)
+    #define GEODE_DLL    GEODE_WINDOWS(__declspec(dllimport))
 #endif
+#define GEODE_API    GEODE_WINDOWS() // idk where this is
 
 // Because C++ doesn't like using a
 // namespace that doesn't exist
