@@ -38,6 +38,16 @@ namespace lilac::core::meta {
                 >::val(tuple.template at<i>(), e);
         }
     };
+
+    template <template <class, class...> class Convention, auto Func> 
+    struct ConventionFrom {
+        using type = Convention<void>;
+    };
+
+    template <template <class, class...> class Convention, class Ret, class ...Args, Ret(* Func)(Args...)> 
+    struct ConventionFrom<Convention, Func> {
+        using type = Convention<Ret, Args...>;
+    };
 }
 
 #endif /* LILAC_CORE_META_CALLCONV_HPP */
