@@ -6,9 +6,11 @@ target_link_libraries(geode_hook_test
 
 target_compile_features(geode_hook_test PRIVATE cxx_std_17)
 
+if (WIN32)
 add_executable(geode_meta_test "meta_test.cpp")
 target_link_libraries(geode_meta_test 
     geode::core::meta
     geode::core::hook)
 
 target_compile_features(geode_meta_test PRIVATE cxx_std_17)
+endif()

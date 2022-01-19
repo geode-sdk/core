@@ -12,9 +12,11 @@ add_library(geode_core_hook STATIC
 	"${PLATFORM}.cpp")
 add_library(geode::core::hook ALIAS geode_core_hook)
 
+if(WIN32)
 target_link_libraries(geode_core_hook
     geode::core::meta
 )
+endif()
 target_compile_features(geode_core_hook PUBLIC cxx_std_17)
 target_include_directories(geode_core_hook 
 	PRIVATE

@@ -2,6 +2,7 @@
 #define GEODE_CORE_HOOK_HPP
 
 #include "../meta/preproc.hpp"
+#include <cstddef>
 
 namespace geode::core::hook {
 	/* opaque struct representing a handle to a hook.

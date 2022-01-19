@@ -1,6 +1,8 @@
 #ifndef GEODE_CORE_HOOK_PLATFORM_HPP
 #define GEODE_CORE_HOOK_PLATFORM_HPP
 
+#include <cstddef>
+
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */

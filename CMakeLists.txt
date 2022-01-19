@@ -3,7 +3,9 @@ cmake_minimum_required(VERSION 3.8)
 project(geode_core LANGUAGES C CXX)
 
 add_subdirectory("src/hook")
-add_subdirectory("src/meta")
+if(WIN32) # TODO: replace it with target platform
+	add_subdirectory("src/meta")
+endif()
 
 if(CMAKE_SOURCE_DIR STREQUAL CMAKE_CURRENT_SOURCE_DIR)
 	add_subdirectory("test")
