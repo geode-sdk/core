@@ -1,16 +1,16 @@
-# lilac::core::hook
+# geode::core::hook
 
 ### Abstract
 
 Currently, the hooking mechanisms used by most mod developers is ugly, inconsistent, error-prone, and incompatible.
-The Lilac hooking library shall be created in a way that makes it very hard for developers to make common mistakes
+The Geode hooking library shall be created in a way that makes it very hard for developers to make common mistakes
 and look similar to actual C++ source code, rather than using C function pointers and ugly syntax.
 The API should be concise, without requiring extra steps in order to enable a hook after creating it.
 In addition, it should allow for easy interoperability between in-game modifications without hook conflicts.
 
 ### Design
 
-The Lilac hooking library shall be implemented using trap instructions and subroutine concepts: "trap hooking".
+The Geode hooking library shall be implemented using trap instructions and subroutine concepts: "trap hooking".
 The advantage of this approach is that:
 - Trap exceptions and subroutining are available on all major CPU architectures, as they are useful for 
 debugging and writing maintainable code.
@@ -20,12 +20,12 @@ debugging and writing maintainable code.
 - Trap hooking is much better for multihook management, compared to inline hooking.
 - Trap hooking does not require a "function gateway".
 
-The Lilac hooking library can also be used for easy midfunction hooks, though this is not the main goal at this time.
+The Geode hooking library can also be used for easy midfunction hooks, though this is not the main goal at this time.
 (Midfunction hooks break cross-platform concept)
 
 ### Implementation
 
-The Lilac hooking library shall use this structure (or something similar) for its hook manager:
+The Geode hooking library shall use this structure (or something similar) for its hook manager:
 ```cpp
 class HookManager {
 private:
@@ -114,5 +114,5 @@ trap hooking on the desired platform. Developers will be required to specify:
 ### Issues
 
 - Android does not allow for dynamic allocation in signal handlers, and it is not well-defined behavior in the POSIX standard.
-  - Solution: spawn a separate thread on lilac initialization, that will be signaled to create memory. This'll probably look really ugly, so wrap it in some nice class.
+  - Solution: spawn a separate thread on geode initialization, that will be signaled to create memory. This'll probably look really ugly, so wrap it in some nice class.
 - I can't think of any as of now, which is good. (pie)

@@ -1,9 +1,9 @@
-#ifndef LILAC_CORE_HOOK_MACOS_HPP
-#define LILAC_CORE_HOOK_MACOS_HPP
+#ifndef GEODE_CORE_HOOK_MACOS_HPP
+#define GEODE_CORE_HOOK_MACOS_HPP
 
 #include "platform.hpp"
 
-namespace lilac::core::hook {
+namespace geode::core::hook {
 	class MacOSX : public Platform<MacOSX> {
 	public:
 		// wow these are the same
@@ -21,4 +21,4 @@ namespace lilac::core::hook {
 	using TargetPlatform = Platform<MacOSX>;
 }
 
-#endif /* LILAC_CORE_HOOK_MACOS_HPP */
+#endif /* GEODE_CORE_HOOK_MACOS_HPP */

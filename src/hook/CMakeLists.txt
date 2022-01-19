@@ -6,20 +6,20 @@ elseif (WIN32)
 	set(PLATFORM "windows")
 endif()
 
-add_library(lilac_core_hook STATIC
+add_library(geode_core_hook STATIC
 	"hook.cpp"
 	"impl.cpp" 
 	"${PLATFORM}.cpp")
-add_library(lilac::core::hook ALIAS lilac_core_hook)
+add_library(geode::core::hook ALIAS geode_core_hook)
 
-target_link_libraries(lilac_core_hook
-    lilac::core::meta
+target_link_libraries(geode_core_hook
+    geode::core::meta
 )
-target_compile_features(lilac_core_hook PUBLIC cxx_std_17)
-target_include_directories(lilac_core_hook 
+target_compile_features(geode_core_hook PUBLIC cxx_std_17)
+target_include_directories(geode_core_hook 
 	PRIVATE
-		${CMAKE_SOURCE_DIR}/include/lilac/core/hook
+		${CMAKE_SOURCE_DIR}/include/geode/core/hook
 	INTERFACE
 		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/lilac>
+		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include/geode>
 )

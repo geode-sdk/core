@@ -7,7 +7,7 @@
 #include <signal.h>             /* sigaction            */
 #include <sys/ucontext.h>       /* ucontext_t           */
 
-using namespace lilac::core::hook;
+using namespace geode::core::hook;
 
 namespace {
 	void handler(int signal, siginfo_t* signal_info, void* vcontext) {

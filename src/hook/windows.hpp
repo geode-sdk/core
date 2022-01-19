@@ -1,9 +1,9 @@
-#ifndef LILAC_CORE_HOOK_WINDOWS_HPP
-#define LILAC_CORE_HOOK_WINDOWS_HPP
+#ifndef GEODE_CORE_HOOK_WINDOWS_HPP
+#define GEODE_CORE_HOOK_WINDOWS_HPP
 
 #include "platform.hpp"
 
-namespace lilac::core::hook {
+namespace geode::core::hook {
 	class WindowsX86 : public Platform<WindowsX86> {
 	public:
 	#if defined(NDEBUG)
@@ -21,4 +21,4 @@ namespace lilac::core::hook {
 	using TargetPlatform = Platform<WindowsX86>;
 }
 
-#endif /* LILAC_CORE_HOOK_WINDOWS_HPP */
+#endif /* GEODE_CORE_HOOK_WINDOWS_HPP */

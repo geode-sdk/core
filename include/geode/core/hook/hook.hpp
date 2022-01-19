@@ -1,9 +1,9 @@
-#ifndef LILAC_CORE_HOOK_HPP
-#define LILAC_CORE_HOOK_HPP
+#ifndef GEODE_CORE_HOOK_HPP
+#define GEODE_CORE_HOOK_HPP
 
 #include "../meta/preproc.hpp"
 
-namespace lilac::core::hook {
+namespace geode::core::hook {
 	/* opaque struct representing a handle to a hook.
 	*/
 	using Handle = void*;
@@ -21,7 +21,7 @@ namespace lilac::core::hook {
 	* the hooked function should have the same calling convention and parameters
 	* as the detour. otherwise, crashing is almost certain to occur.
 	*/
-	Handle LILAC_CALL add(const void* address, const void* detour);
+	Handle GEODE_CALL add(const void* address, const void* detour);
 
 	/*
 	* params:
@@ -31,7 +31,7 @@ namespace lilac::core::hook {
 	* true if the hook was successfully removed.
 	* false if removal failed.
 	*/
-	bool LILAC_CALL remove(Handle handle);
+	bool GEODE_CALL remove(Handle handle);
 
 	/**
 	 * @param address Address to write to
@@ -40,7 +40,7 @@ namespace lilac::core::hook {
 	 * @returns True if succesfully written, 
 	 * false if not
 	 */
-	bool LILAC_CALL write_memory(void* address, void* data, size_t size);
+	bool GEODE_CALL write_memory(void* address, void* data, size_t size);
 
 	/**
 	 * @param address Address to read from
@@ -49,7 +49,7 @@ namespace lilac::core::hook {
 	 * @returns True if succesfully read, 
 	 * false if not
 	 */
-	bool LILAC_CALL read_memory(void* address, void* receive, size_t size);
+	bool GEODE_CALL read_memory(void* address, void* receive, size_t size);
 }
 
-#endif /* LILAC_CORE_HOOK_HPP */
+#endif /* GEODE_CORE_HOOK_HPP */

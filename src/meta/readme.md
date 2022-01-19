@@ -1,7 +1,7 @@
-# lilac::core::meta
+# geode::core::meta
 
 Welcome to C++ metaprogramming hell!
-If you're looking for the implementation of this library, they are located in `{root}/include/lilac/core/meta`.
+If you're looking for the implementation of this library, they are located in `{root}/include/geode/core/meta`.
 
 ### Abstract
 

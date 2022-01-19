@@ -1,7 +1,7 @@
-#ifndef LILAC_CORE_META_CALLCONV_HPP
-#define LILAC_CORE_META_CALLCONV_HPP
+#ifndef GEODE_CORE_META_CALLCONV_HPP
+#define GEODE_CORE_META_CALLCONV_HPP
 
-namespace lilac::core::meta {
+namespace geode::core::meta {
     /* CRTP class for creating calling conventions for Function and Hook.
     * Provides some utilities for less verbose filtering of parameters, and
     * some wrappers to require the custom calling convention to supply an
@@ -37,17 +37,18 @@ namespace lilac::core::meta {
                     Pred<typename MyTuple::template type_at<i>>::value
                 >::val(tuple.template at<i>(), e);
         }
-    };
 
-    template <template <class, class...> class Convention, auto Func> 
-    struct ConventionFrom {
-        using type = Convention<void>;
-    };
+        // Why is this here. Stop.
+        template <template <class, class...> class Convention, auto Func> 
+        struct ConventionFrom {
+            using type = Convention<void>;
+        };
 
-    template <template <class, class...> class Convention, class Ret, class ...Args, Ret(* Func)(Args...)> 
-    struct ConventionFrom<Convention, Func> {
-        using type = Convention<Ret, Args...>;
+        template <template <class, class...> class Convention, class Ret, class ...Args, Ret(* Func)(Args...)> 
+        struct ConventionFrom<Convention, Func> {
+            using type = Convention<Ret, Args...>;
+        };
     };
 }
 
-#endif /* LILAC_CORE_META_CALLCONV_HPP */
+#endif /* GEODE_CORE_META_CALLCONV_HPP */

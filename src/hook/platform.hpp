@@ -1,10 +1,10 @@
-#ifndef LILAC_CORE_HOOK_PLATFORM_HPP
-#define LILAC_CORE_HOOK_PLATFORM_HPP
+#ifndef GEODE_CORE_HOOK_PLATFORM_HPP
+#define GEODE_CORE_HOOK_PLATFORM_HPP
 
 /* platform template for platforms, lol
 * in a different header to avoid cyclic dependencies
 */
-namespace lilac::core::hook {
+namespace geode::core::hook {
 	template <typename T>
 	class Platform {
 	public:
@@ -38,4 +38,4 @@ namespace lilac::core::hook {
 	};
 }
 
-#endif /* LILAC_CORE_HOOK_PLATFORM_HPP */
+#endif /* GEODE_CORE_HOOK_PLATFORM_HPP */

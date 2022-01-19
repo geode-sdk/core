@@ -1,7 +1,7 @@
 #include "impl.hpp"
 
-using namespace lilac::core;
-using namespace lilac::core::hook;
+using namespace geode::core;
+using namespace geode::core::hook;
 
 void HookManager::add_trap(const void* address, char buffer[]) {
 	void* addr = const_cast<void*>(address);

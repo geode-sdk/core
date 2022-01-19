@@ -1,5 +1,5 @@
-#ifndef LILAC_CORE_META_HOOK_HPP
-#define LILAC_CORE_META_HOOK_HPP
+#ifndef GEODE_CORE_META_HOOK_HPP
+#define GEODE_CORE_META_HOOK_HPP
 
 #include "tuple.hpp"
 #include "common.hpp"
@@ -9,7 +9,7 @@
 
 #include <type_traits>
 
-namespace lilac::core::meta {
+namespace geode::core::meta {
     template <
         auto address,
         auto detour,
@@ -34,12 +34,12 @@ namespace lilac::core::meta {
         using MyTuple = Tuple<Args...>;
 
     private:
-        static inline lilac::core::hook::Handle handle;
+        static inline geode::core::hook::Handle handle;
 
     public:
         Hook() {
             auto wrapper = MyConv::template get_wrapper<detour>();
-            this->handle = lilac::core::hook::add(reinterpret_cast<void*>(address), reinterpret_cast<void*>(wrapper));
+            this->handle = geode::core::hook::add(reinterpret_cast<void*>(address), reinterpret_cast<void*>(wrapper));
         }
 
         static auto get_wrapper() {
@@ -60,4 +60,4 @@ namespace lilac::core::meta {
 }
 
 
-#endif /* LILAC_CORE_META_HOOK_HPP */
+#endif /* GEODE_CORE_META_HOOK_HPP */

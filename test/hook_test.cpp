@@ -1,9 +1,9 @@
-#include <lilac/core/hook/hook.hpp>
+#include <geode/core/hook/hook.hpp>
 
-#if defined(LILAC_IS_WINDOWS)
+#if defined(GEODE_IS_WINDOWS)
 	#include <Windows.h>
 	#define NOINLINE __declspec(noinline)
-#elif defined(LILAC_IS_MACOS)
+#elif defined(GEODE_IS_MACOS)
 	#define NOINLINE __attribute__((noinline))
 #endif
 
@@ -47,11 +47,11 @@ void hook1(const char* str) {
 
 template <class A, class B>
 decltype(auto) add_hook(A func, B hook) {
-	return lilac::core::hook::add((void*)func, (void*)hook);
+	return geode::core::hook::add((void*)func, (void*)hook);
 }
 
 int main() {
-	using namespace lilac::core;
+	using namespace geode::core;
 
 	auto h1 = add_hook(to_hook, hook1);
 	auto h2 = add_hook(to_hook, hook2);

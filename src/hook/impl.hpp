@@ -1,18 +1,18 @@
-#ifndef LILAC_CORE_HOOK_IMPL_HPP
-#define LILAC_CORE_HOOK_IMPL_HPP
+#ifndef GEODE_CORE_HOOK_IMPL_HPP
+#define GEODE_CORE_HOOK_IMPL_HPP
 
 #include <hook.hpp>
 
 #include <vector>
 #include <map>
 
-#if defined(LILAC_IS_WINDOWS)
+#if defined(GEODE_IS_WINDOWS)
 	#include "windows.hpp"
-#elif defined(LILAC_IS_MACOS)
+#elif defined(GEODE_IS_MACOS)
 	#include "macos.hpp"
 #endif
 
-namespace lilac::core::hook {
+namespace geode::core::hook {
 	class HookManager {
 	private:
 		struct HookChain;
@@ -54,9 +54,9 @@ namespace lilac::core::hook {
 		// returns true if handled, false if not.
 		static bool handler(Exception& info);
 
-		static hook::Handle LILAC_CALL add_hook(const void* address, const void* detour);
-		static bool LILAC_CALL remove_hook(hook::Handle handle);
+		static hook::Handle GEODE_CALL add_hook(const void* address, const void* detour);
+		static bool GEODE_CALL remove_hook(hook::Handle handle);
 	};
 }
 
-#endif /* LILAC_CORE_HOOK_IMPL_HPP */
+#endif /* GEODE_CORE_HOOK_IMPL_HPP */

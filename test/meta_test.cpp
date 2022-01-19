@@ -1,14 +1,14 @@
-#include <lilac/core/meta/function.hpp>
-#include <lilac/core/meta/hook.hpp>
-#include <lilac/core/meta/optcall.hpp>
+#include <geode/core/meta/function.hpp>
+#include <geode/core/meta/hook.hpp>
+#include <geode/core/meta/optcall.hpp>
 #include <iostream>
 #include <string>
 
-using namespace lilac::core;
+using namespace geode::core;
 
-#if defined(LILAC_IS_WINDOWS)
+#if defined(GEODE_IS_WINDOWS)
 	#define NOINLINE __declspec(noinline)
-#elif defined(LILAC_IS_MACOS)
+#elif defined(GEODE_IS_MACOS)
 	#define NOINLINE __attribute__((noinline))
 #endif
 

@@ -3,7 +3,7 @@
 
 #include <Windows.h>
 
-using namespace lilac::core::hook;
+using namespace geode::core::hook;
 
 namespace {
 	LONG WINAPI handler(EXCEPTION_POINTERS* info) {
