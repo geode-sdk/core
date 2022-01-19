@@ -5,7 +5,7 @@ add_library(geode::core::meta ALIAS geode_core_meta)
 
 target_compile_features(geode_core_meta INTERFACE cxx_std_17)
 target_include_directories(
-	geode_core_meta
-	INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
+    geode_core_meta
+    INTERFACE
+        $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )

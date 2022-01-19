@@ -8,9 +8,9 @@
 using namespace geode::core;
 
 #if defined(GEODE_IS_WINDOWS)
-	#define NOINLINE __declspec(noinline)
+    #define NOINLINE __declspec(noinline)
 #elif defined(GEODE_IS_MACOS)
-	#define NOINLINE __attribute__((noinline))
+    #define NOINLINE __attribute__((noinline))
 #endif
 
 int test1(int x) {

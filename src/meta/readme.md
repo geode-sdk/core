@@ -62,7 +62,7 @@ in order to take care of the conflicting stack cleanup between optcall and `vect
 
 ### Thiscall
 This is a well-documented calling convention, the default for member functions:
-| Parameter type | 1 | 2 |
+| Parameter type | 1 | 2+ |
 | --- | --- | --- |
 | Floating point | Not possible | stack |
 | Integers, pointers | ecx | stack |

@@ -29,34 +29,34 @@ The Geode hooking library shall use this structure (or something similar) for it
 ```cpp
 class HookManager {
 private:
-  // platform dependent: should be in another class, actually
-  static constexpr char trap[] = { /* the trap, or something */ };
+    // platform dependent: should be in another class, actually
+    static constexpr char trap[] = { /* the trap, or something */ };
 
 private:
-  class HookChain {
-    std::vector<void*> detours = {};
-    std::vector<CallFrame*> frames = {};
-    
-    char original_bytes[sizeof(trap)] = {};
-  }
+    class HookChain {
+        std::vector<void*> detours = {};
+        std::vector<CallFrame*> frames = {};
+
+        char original_bytes[sizeof(trap)] = {};
+    }
   
-  class CallFrame {
-    const void* address = nullptr;
-    HookChain* parent = nullptr;
-    char original_bytes[sizeof(trap)] = {};
-  }
+    class CallFrame {
+        const void* address = nullptr;
+        HookChain* parent = nullptr;
+        char original_bytes[sizeof(trap)] = {};
+    }
   
-  static inline std::map<void*, HookChain> all_hooks = {};
-  static inline std::map<void*, CallFrame> all_frames = {};
+    static inline std::map<void*, HookChain> all_hooks = {};
+    static inline std::map<void*, CallFrame> all_frames = {};
   
 public:
-  struct Exception {
-    const void* address = nullptr;
-    const void* return_address = nullptr;
-    const void*& instruction_pointer;
-  }
+    struct Exception {
+        const void* address = nullptr;
+        const void* return_address = nullptr;
+        const void*& instruction_pointer;
+    }
 
-  static bool handler(Exception& info);
+    static bool handler(Exception& info);
 }
 ```
 
