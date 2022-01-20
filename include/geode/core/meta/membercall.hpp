@@ -37,12 +37,10 @@ namespace geode::core::meta::x86 {
             static constexpr bool result = true;
 
             static constexpr size_t index = 
-                // If in GPR, retain index
-                gpr ? i
-                // If in SSE, offset by 1 (1 GPR register available)
-                : (sse ? i + 1
+                // If in GPR or SSE, retain index
+                (gpr || sse) ? i
                 // If on stack, offset by 4 (3 SSE + 1 GPR register(s) available)
-                : stack_offset + 4);
+                : stack_offset + 4;
 
             // If our output index is greater than 4, it has to be on stack. Increment.
             static constexpr size_t counter = stack_offset + static_cast<size_t>(index >= 4);

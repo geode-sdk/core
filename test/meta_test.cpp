@@ -2,6 +2,7 @@
 #include <geode/core/meta/hook.hpp>
 #include <geode/core/meta/optcall.hpp>
 #include <geode/core/meta/thiscall.hpp>
+#include <geode/core/meta/membercall.hpp>
 #include <iostream>
 #include <string>
 
@@ -37,6 +38,14 @@ std::string optcall_test(float a, int b, int c, float d, float e) {
     return std::string("hello ") + std::to_string(e);
 }
 
+std::string membercall_test(int a, int b, int c, float d, float e) {
+    std::cout << "ecx " << a << '\n';
+    std::cout << "stack 0" << b << '\n';
+    std::cout << "stack 1 " << c << '\n';
+    std::cout << "xmm3 " << d << '\n';
+    std::cout << "stack 2 " << e << '\n';
+    return std::string("hello member");
+}
 
 std::string thiscall_test(int ecx, float stack) {
     std::cout << "ecx " << ecx << '\n';
@@ -70,11 +79,15 @@ int main() {
         movss xmm3, f3
     }
     auto optcall_ret = optcall(420, 1337.f);
-    std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n";
+    std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n\n";
 
     auto thiscall = meta::Hook<&to_hook, &thiscall_test, meta::x86::Thiscall>::get_wrapper();
     auto thiscall_ret = thiscall(222, 341.0f);
-    std::cout << "thiscall wrapper returned \"" << thiscall_ret << "\"\n";
+    std::cout << "thiscall wrapper returned \"" << thiscall_ret << "\"\n\n";
+
+    auto membercall = meta::Hook<&to_hook, membercall_test, meta::x86::Membercall>::get_wrapper();
+    auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.0f, 222.0f, 223.0f, 3, 45, 555, 666, 777.0f);
+    std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
     
     //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
     //std::cout << "another result \"" << result << '"' << std::endl;
