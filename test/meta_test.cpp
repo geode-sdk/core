@@ -1,4 +1,5 @@
 #include <geode/core/meta/function.hpp>
+#include <geode/core/meta/cdecl.hpp>
 #include <geode/core/meta/hook.hpp>
 #include <geode/core/meta/optcall.hpp>
 #include <geode/core/meta/thiscall.hpp>
