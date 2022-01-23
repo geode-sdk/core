@@ -4,7 +4,7 @@
 #include <hook.hpp>
 
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 #if defined(GEODE_IS_WINDOWS)
     #include "windows.hpp"
@@ -36,8 +36,15 @@ namespace geode::core::hook {
         };
 
     private:
-        static inline std::map<const void*, HookChain> all_hooks = {};
-        static inline std::map<const void*, CallFrame> all_frames = {};
+        static inline auto& all_hooks() {
+            static std::unordered_map<const void*, HookChain> ret;
+            return ret;
+        }
+
+        static inline auto& all_frames() {
+            static std::unordered_map<const void*, CallFrame> ret;
+            return ret;
+        }
 
     private:
         /* these don't check char buffer bounds. it should have sizeof(trap) size.
