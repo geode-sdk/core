@@ -30,7 +30,7 @@ namespace geode::core::hook {
             return T::initialize();
         }
 
-        static const inline bool init = initialize();
+        //static const inline bool init = initialize(); //no
     };
 
     struct Exception {

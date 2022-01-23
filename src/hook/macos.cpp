@@ -38,7 +38,6 @@ bool MacOSX::write_memory(void* to, const void* from, size_t size) {
 }
 
 bool MacOSX::initialize() {
-    volatile int a = init; /* epic bugfixing */
     struct sigaction action;
     memset(&action, '\0', sizeof(action));
     action.sa_sigaction = &handler;

@@ -19,3 +19,7 @@ bool GEODE_CALL geode::core::hook::write_memory(void* address, void* data, size_
 bool GEODE_CALL geode::core::hook::read_memory(void* address, void* receive, size_t size) {
     return TargetPlatform::read_memory(address, receive, size);
 }
+
+bool GEODE_CALL geode::core::hook::initialize() {
+    return TargetPlatform::initialize();
+}

@@ -9,6 +9,8 @@ namespace geode::core::hook {
     */
     using Handle = void*;
 
+    bool GEODE_CALL initialize();
+
     /*
     * params:
     * address - a pointer to the virtual memory to be hooked.
