@@ -61,6 +61,9 @@ int main() {
     meta::Function<void(float, float, float, float, int, int, int), meta::x86::Optcall> f2 = test1;
     f2(6.0f, 2.0f, 3.0f, 5.0f, 2234, 2, 234);
 
+    meta::Function<void(void*, float, int), meta::x86::Membercall> f3 = test1;
+    f3(nullptr, 23.0f, 455);
+
     to_hook(6);
     to_hook(24);
 
@@ -71,12 +74,12 @@ int main() {
     // stack 0 420
     // xmm3 3.123
     // stack 1 1337
-    float f0 = 0.123f;
-    float f3 = 3.123f;
+    float fl0 = 0.123f;
+    float fl3 = 3.123f;
     __asm {
-        movss xmm0, f0
+        movss xmm0, fl0
         mov edx, 123
-        movss xmm3, f3
+        movss xmm3, fl3
     }
     auto optcall_ret = optcall(420, 1337.f);
     std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n\n";
