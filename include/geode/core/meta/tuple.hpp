@@ -77,40 +77,65 @@ namespace geode::core::meta {
         using type_at = decltype(std::declval<MyElements>().template at<i>());
 
     protected:
-        // Haskell
+        // Haskell (false case)
+        template <
+            template <size_t, class, size_t> class Pred, 
+            bool, size_t i, size_t counter, size_t... seq
+        >
+        class filter_impl {
+        private:
+            using NextPred = Pred<i + 1, type_at<i + 1>, counter>;
+        
+        public:
+            using result = typename filter_impl<
+                    Pred, NextPred::result, i + 1, counter, seq...
+                >::result;
+        };
+
+        // Haskell (true case)
         template <
             template <size_t, class, size_t> class Pred, 
             size_t i, size_t counter, size_t... seq
         >
-        class filter_impl {
+        class filter_impl<Pred, true, i, counter, seq...> {
         private:
             using MyPred = Pred<i, type_at<i>, counter>;
+            using NextPred = Pred<i + 1, type_at<i + 1>, counter>;
         
         public:
-            using result = typename ternary<MyPred::result>
-                ::template type<
-                    typename filter_impl<
-                        Pred, i + 1, MyPred::counter, seq..., MyPred::index
-                    >::result,
-                    typename filter_impl<
-                        Pred, i + 1, counter, seq...
-                    >::result
-                >;
+            using result = typename filter_impl<
+                    Pred, NextPred::result, i + 1, 
+                    MyPred::counter, seq..., MyPred::index
+                >::result;
         };
 
-        // Haskell (final case)
+        // Haskell (final case, if true)
         template <
             template <size_t, class, size_t> class Pred, 
             size_t counter, size_t... seq
         >
-        class filter_impl<Pred, sizeof...(Rest) + 1, counter, seq...> {
+        class filter_impl<Pred, false, sizeof...(Rest), counter, seq...> {
         public:
             using result = std::index_sequence<seq...>;
+        };
+
+        // Haskell (final case, if false)
+        template <
+            template <size_t, class, size_t> class Pred, 
+            size_t counter, size_t... seq
+        >
+        class filter_impl<Pred, true, sizeof...(Rest), counter, seq...> {
+        private:
+            static constexpr size_t i = sizeof...(Rest);
+            using LastPred = Pred<i - 1, type_at<i - 1>, counter>;
+            
+        public:
+            using result = std::index_sequence<seq..., LastPred::index>;
         };
         
     public:
         template <template <size_t, class, size_t> class Pred>
-        using filter = typename filter_impl<Pred, 0, 0>::result;
+        using filter = typename filter_impl<Pred, Pred<0, Current, 0>::result, 0, 0>::result;
     };
 }
 
