@@ -43,11 +43,16 @@ bool MacOSX::initialize() {
     action.sa_sigaction = &handler;
     action.sa_flags = SA_SIGINFO;
 
-    #if defined(NDEBUG)
-        int signal = SIGTRAP;
-    #else
-        int signal = SIGILL;
-    #endif
+    // #if defined(NDEBUG)
+    //     int signal = SIGTRAP;
+    // #else
+    //     int signal = SIGILL;
+    // #endif
+    int signal = SIGILL;
 
     return sigaction(signal, &action, NULL) < 0;
+}
+
+const void* MacOSX::align_address(const void* address) {
+	return address; 
 }

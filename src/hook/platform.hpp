@@ -30,6 +30,10 @@ namespace geode::core::hook {
             return T::initialize();
         }
 
+        static const void* align_address(const void* address) {
+			return T::align_address(address);
+		}
+
         //static const inline bool init = initialize(); //no
     };
 

@@ -16,6 +16,7 @@ namespace geode::core::hook {
         static bool read_memory(void* addr, void* to, size_t size);
         static bool write_memory(void* to, const void* from, size_t size);
         static bool initialize();
+        static const void* align_address(const void* address);
     };
 
     using TargetPlatform = Platform<WindowsX86>;

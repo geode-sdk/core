@@ -46,3 +46,7 @@ bool WindowsX86::read_memory(void* addr, void* to, size_t size) {
 bool WindowsX86::initialize() {
     return AddVectoredExceptionHandler(true, handler);
 }
+
+const void* WindowsX86::align_address(const void* address) {
+	return (const void*)((uintptr_t)address & -0x1); 
+}

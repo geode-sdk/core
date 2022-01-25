@@ -7,15 +7,16 @@ namespace geode::core::hook {
     class MacOSX : public Platform<MacOSX> {
     public:
         // wow these are the same
-    #if defined(NDEBUG)
-        static constexpr char trap[] = { '\xCC' };
-    #else
+    // #if defined(NDEBUG)
+    //     static constexpr char trap[] = { '\xCC' };
+    // #else
         static constexpr char trap[] = { '\x0F', '\x0B' };
-    #endif
+    // #endif
 
     public:
         static bool write_memory(void* to, const void* from, size_t size);
         static bool initialize();
+        static const void* align_address(const void* address);
     };
 
     using TargetPlatform = Platform<MacOSX>;
