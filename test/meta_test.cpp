@@ -53,6 +53,17 @@ std::string thiscall_test(int ecx, float stack) {
     return std::string("lol");
 }
 
+template <auto, template <class, class...> class>
+struct get_wrapper;
+
+template <
+    class Ret, class... Args, 
+    Ret(* func)(Args...),
+    template <class, class...> class Conv>
+struct get_wrapper<func, Conv> {
+    static constexpr auto result = Conv<Ret, Args...>::get_wrapper<func>();
+};
+
 int main() {
     meta::Hook<&to_hook, &hook1, meta::x86::Optcall> hook;
     meta::Function<int(int, int, int), meta::x86::Optcall> f1 = test1;
@@ -67,7 +78,8 @@ int main() {
     to_hook(6);
     to_hook(24);
 
-    auto optcall = meta::Hook<&to_hook, &optcall_test, meta::x86::Optcall>::get_wrapper();
+#if 0
+    auto optcall = get_wrapper<&optcall_test, meta::x86::Optcall>::result;
     // expected:
     // xmm0 0.123
     // edx 123
@@ -84,14 +96,15 @@ int main() {
     auto optcall_ret = optcall(420, 1337.f);
     std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n\n";
 
-    auto thiscall = meta::Hook<&to_hook, &thiscall_test, meta::x86::Thiscall>::get_wrapper();
+    auto thiscall = get_wrapper<&thiscall_test, meta::x86::Thiscall>::result;
     auto thiscall_ret = thiscall(222, 341.0f);
     std::cout << "thiscall wrapper returned \"" << thiscall_ret << "\"\n\n";
 
-    auto membercall = meta::Hook<&to_hook, membercall_test, meta::x86::Membercall>::get_wrapper();
+    auto membercall = get_wrapper<&membercall_test, meta::x86::Membercall>::result;
     auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.0f, 222.0f, 223.0f, 3, 45, 555, 666, 777.0f);
     std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
     
     //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
     //std::cout << "another result \"" << result << '"' << std::endl;
+#endif
 }
