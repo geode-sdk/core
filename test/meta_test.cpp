@@ -61,14 +61,15 @@ template <
     Ret(* func)(Args...),
     template <class, class...> class Conv>
 struct get_wrapper<func, Conv> {
-    static constexpr auto result = Conv<Ret, Args...>::get_wrapper<func>();
+    static constexpr auto result = Conv<Ret, Args...>::template get_wrapper<func>();
 };
 
 int main() {
-    meta::Hook<&to_hook, &hook1, meta::x86::Optcall> hook;
+    // meta::Hook<&to_hook, &hook1, meta::x86::Optcall> hook;
     meta::Function<int(int, int, int), meta::x86::Optcall> f1 = test1;
     int val = f1(2, 3, 4);
 
+#if 0
     meta::Function<void(float, float, float, float, int, int, int), meta::x86::Optcall> f2 = test1;
     f2(6.0f, 2.0f, 3.0f, 5.0f, 2234, 2, 234);
 
@@ -78,7 +79,7 @@ int main() {
     to_hook(6);
     to_hook(24);
 
-#if 0
+
     auto optcall = get_wrapper<&optcall_test, meta::x86::Optcall>::result;
     // expected:
     // xmm0 0.123

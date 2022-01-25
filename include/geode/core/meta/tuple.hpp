@@ -24,7 +24,7 @@ namespace geode::core::meta {
             T value;
 
         protected:
-            constexpr T at(std::integral_constant<size_t, i>&&) {
+            constexpr T at(std::integral_constant<size_t, i>&&) const {
                 return this->value;
             }
         
@@ -40,15 +40,10 @@ namespace geode::core::meta {
         public:
             static constexpr size_t size = sizeof...(Parents);
             template <size_t i>
-            constexpr decltype(auto) at() {
+            constexpr decltype(auto) at() const {
                 static_assert(i < size, "Out of range access!");
                 return this->at(std::integral_constant<size_t, i>());
             }
-
-            template <size_t i>
-            using type_at = decltype(std::declval<Elements<Parents...>>().template at<i>());
-
-            
         };
 
         template <class, class...>
@@ -75,11 +70,11 @@ namespace geode::core::meta {
     template <class Current, class... Rest>
     class Tuple<Current, Rest...> : public Tuple<>::elements_for<Current, Rest...> {
     private:
-        using MyElements = Tuple<>::elements_for<Current, Rest>;
+        using MyElements = Tuple<>::elements_for<Current, Rest...>;
 
     public:
         template <size_t i>
-        using type_at = typename MyElements::template type_at<i>;
+        using type_at = decltype(std::declval<MyElements>().template at<i>());
 
     protected:
         // Haskell
