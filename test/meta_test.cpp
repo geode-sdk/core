@@ -69,7 +69,6 @@ int main() {
     meta::Function<int(int, int, int), meta::x86::Optcall> f1 = test1;
     int val = f1(2, 3, 4);
 
-#if 0
     meta::Function<void(float, float, float, float, int, int, int), meta::x86::Optcall> f2 = test1;
     f2(6.0f, 2.0f, 3.0f, 5.0f, 2234, 2, 234);
 
@@ -107,5 +106,4 @@ int main() {
     
     //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
     //std::cout << "another result \"" << result << '"' << std::endl;
-#endif
 }
