@@ -127,10 +127,10 @@ namespace geode::core::meta {
         class filter_impl<Pred, true, sizeof...(Rest), counter, seq...> {
         private:
             static constexpr size_t i = sizeof...(Rest);
-            using LastPred = Pred<(i != 0) ? (i - 1) : 0, type_at<(i != 0) ? (i - 1) : 0>, counter>;
+            using MyPred = Pred<i, type_at<i>, counter>;
             
         public:
-            using result = std::index_sequence<seq..., LastPred::index>;
+            using result = std::index_sequence<seq..., MyPred::index>;
         };
         
     public:
