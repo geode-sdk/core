@@ -1,6 +1,8 @@
 #include "macos.hpp"
 #include "impl.hpp"
 
+#include <mach/task.h>
+#include <mach/mach_port.h>
 #include <mach/mach_vm.h>       /* mach_vm_*            */
 #include <mach/mach_init.h>     /* mach_task_self()     */
 
@@ -38,6 +40,12 @@ bool MacOSX::write_memory(void* to, const void* from, size_t size) {
 }
 
 bool MacOSX::initialize() {
+	task_set_exception_ports(
+		mach_task_self(),
+		EXC_MASK_BAD_INSTRUCTION,
+		MACH_PORT_NULL,//m_exception_port,
+		EXCEPTION_DEFAULT,
+		0); 
     struct sigaction action;
     memset(&action, '\0', sizeof(action));
     action.sa_sigaction = &handler;
