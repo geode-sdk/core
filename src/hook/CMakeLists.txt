@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.8)
 
 if (GEODE_TARGET_PLATFORM STREQUAL "MacOS")
     set(PLATFORM "macos")
-elseif (GEODE_TARGET_PLATFORM STREQUAL "Windows")
+elseif (GEODE_TARGET_PLATFORM STREQUAL "Win32")
     set(PLATFORM "windows")
 elseif (GEODE_TARGET_PLATFORM STREQUAL "iOS")
     set(PLATFORM "ios")
