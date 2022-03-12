@@ -23,7 +23,7 @@ namespace geode::core::meta {
         };
 
         template <size_t i>
-        using type_at_wrap = typename type_at_wrap_impl<i < MyTuple::size, i>::result;
+        using type_at_wrap = typename type_at_wrap_impl<(i < MyTuple::size), i>::result;
 
         template <size_t i>
         static constexpr decltype(auto) at_wrap(const MyTuple& tuple) {
