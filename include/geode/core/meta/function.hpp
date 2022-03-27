@@ -32,8 +32,8 @@ namespace geode::core::meta {
         void* addr;
 
     public:
-        template <class T>
-        Function(const T& addr)
+        template <class Pointer>
+        Function(const Pointer& addr)
             : addr(reinterpret_cast<void*>(addr)) {}
 
         decltype(auto) operator()(Args... all) const {

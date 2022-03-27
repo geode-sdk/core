@@ -1,6 +1,9 @@
 #ifndef GEODE_CORE_META_CALLCONV_HPP
 #define GEODE_CORE_META_CALLCONV_HPP
 
+#include <array>
+#include <utility>
+
 namespace geode::core::meta {
     /* CRTP class for creating calling conventions for Function and Hook.
     * Provides some utilities for less verbose filtering of parameters, and
@@ -13,12 +16,14 @@ namespace geode::core::meta {
         using MyTuple = Tuple<Args...>;
 
         template <bool, size_t i>
-        struct type_at_wrap_impl {
+        class type_at_wrap_impl {
+        public:
             using result = void;
         };
 
         template <size_t i>
-        struct type_at_wrap_impl<true, i> {
+        class type_at_wrap_impl<true, i> {
+        public:
             using result = typename MyTuple::template type_at<i>;
         };
 
@@ -60,6 +65,28 @@ namespace geode::core::meta {
                     Pred<type_at_wrap<i>>::value
                 >::val(at_wrap<i>(tuple), e);
         }
+
+        template <auto>
+        class arr_to_seq_impl;
+
+        template <class Type, size_t length, const std::array<Type, length>* arr>
+        class arr_to_seq_impl<arr> {
+        private:
+            template <class>
+            class getter;
+
+            template <size_t... indices>
+            class getter<std::index_sequence<indices...>> {
+            public:
+                using result = std::index_sequence<arr->at(indices)...>;
+            };
+            
+        public:
+            using result = typename getter<std::make_index_sequence<length>>::result;
+        };
+
+        template <auto& arr>
+        using arr_to_seq = typename arr_to_seq_impl<&arr>::result;
     };
 }
 

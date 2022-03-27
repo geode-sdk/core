@@ -30,8 +30,8 @@ namespace geode::core::meta {
         using type = T;
     };
 
-    template <class Class, class... Compare>
-    static constexpr bool any_of = (std::is_same_v<Class, Compare> || ...);
+    template <class Type, class... Compare>
+    static constexpr bool any_of = (std::is_same_v<Type, Compare> || ...);
 
     template <class... Classes>
     static constexpr bool always_false = false;

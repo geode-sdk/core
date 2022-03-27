@@ -32,7 +32,9 @@ Optcall follows a format similar to the standard 64-bit calling convention used 
 | Parameter type | 1 | 2 | 3 | 4 | 5+ |
 | --- | --- | --- | --- | --- | --- |
 | Floating point | xmm0 | xmm1 | xmm2 | xmm3 | stack |
-| Integers, pointers | ecx | edx | stack | stack | stack |
+
+The first and second integer / pointer type arguments go in ecx and edx, regardless of its position.
+This calling convention pushes structures to the end of the parameter list before placing arguments in registers.
 
 Caller cleans the stack.
 

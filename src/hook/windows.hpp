@@ -7,16 +7,16 @@ namespace geode::core::hook {
     class WindowsX86 : public Platform<WindowsX86> {
     public:
     #if defined(NDEBUG)
+        // int3
         static constexpr char trap[] = { '\xCC' };
     #else
+        // ud2
         static constexpr char trap[] = { '\x0F', '\x0B' };
     #endif
 
     public:
-        static bool read_memory(void* addr, void* to, size_t size);
         static bool write_memory(void* to, const void* from, size_t size);
         static bool initialize();
-        static const void* align_address(const void* address);
     };
 
     using TargetPlatform = Platform<WindowsX86>;

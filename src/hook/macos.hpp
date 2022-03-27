@@ -11,7 +11,6 @@ namespace geode::core::hook {
     public:
         static bool write_memory(void* to, const void* from, size_t size);
         static bool initialize();
-        static const void* align_address(const void* address);
     };
 
     using TargetPlatform = Platform<MacOSX>;

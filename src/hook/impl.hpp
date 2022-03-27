@@ -22,14 +22,14 @@ namespace geode::core::hook {
         struct CallFrame {
             const void* address = nullptr;
             HookChain* parent = nullptr;
-            char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
+            char original_bytes[sizeof(TargetPlatform::trap())] = { 0 };
         };
 
         struct HookChain {
             const void* address = nullptr;
             std::vector<const void*> detours = {};
             std::vector<CallFrame*> frames = {};
-            char original_bytes[TargetPlatform::get_trap_size()] = { 0 };
+            char original_bytes[sizeof(TargetPlatform::trap())] = { 0 };
         };
 
         struct Handle {

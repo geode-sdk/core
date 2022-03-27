@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 
+using namespace geode::core;
+
 // you see, on release builds this function got inlined
 // meaning none of the hooks would work at all
 void NOINLINE to_hook(const char* str) {
@@ -47,11 +49,11 @@ void hook1(const char* str) {
 
 template <class A, class B>
 decltype(auto) add_hook(A func, B hook) {
-    return geode::core::hook::add((void*)func, (void*)hook);
+    return hook::add((void*)func, (void*)hook);
 }
 
 int main() {
-    using namespace geode::core;
+    hook::initialize();
 
     auto h1 = add_hook(to_hook, hook1);
     auto h2 = add_hook(to_hook, hook2);

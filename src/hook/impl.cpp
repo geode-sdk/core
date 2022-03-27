@@ -5,22 +5,23 @@ using namespace geode::core::hook;
 
 void HookManager::add_trap(const void* address, char buffer[]) {
     void* addr = const_cast<void*>(address);
+    constexpr auto& trap = TargetPlatform::trap();
 
     if (buffer != nullptr) {
-        TargetPlatform::write_memory(buffer, addr, TargetPlatform::get_trap_size());
+        TargetPlatform::write_memory(buffer, addr, sizeof(trap));
     }
-
-    TargetPlatform::write_memory(addr, TargetPlatform::get_trap(), TargetPlatform::get_trap_size());
+    
+    TargetPlatform::write_memory(addr, trap, sizeof(trap));
 }
 
 void HookManager::remove_trap(const void* address, char buffer[]) {
-    TargetPlatform::write_memory(const_cast<void*>(address), buffer, TargetPlatform::get_trap_size());
+    TargetPlatform::write_memory(const_cast<void*>(address), buffer, sizeof(TargetPlatform::trap()));
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
     auto pair = all_hooks().find(info.address);
     if (pair != all_hooks().end()) {
-        auto& hook = pair->second;
+        HookChain& hook = pair->second;
 
         // add a frame hook for cleanup
         auto frame_pair = all_frames().find(info.return_address);
@@ -30,7 +31,7 @@ bool HookManager::find_in_hooks(Exception& info) {
             }
         }
         else {
-            auto result = all_frames().insert({ info.return_address, CallFrame() });
+            auto result = all_frames().insert({ info.return_address, {} });
             if (!result.second) {
                 // insertion failed
                 return false;
@@ -45,18 +46,18 @@ bool HookManager::find_in_hooks(Exception& info) {
             }
         }
 
-        auto& frame = frame_pair->second;
+        CallFrame& frame = frame_pair->second;
         frame.parent = &hook;
         frame.address = info.return_address;
         
         hook.frames.push_back(&frame);
 
         // redirect to next detour
-        info.instruction_pointer = hook.detours[hook.frames.size() - 1];
+        info.address = hook.detours[hook.frames.size() - 1];
         
         // specialization for last detour: original calls don't call next detour
         if (hook.frames.size() == hook.detours.size()) {
-            remove_trap(info.address, hook.original_bytes);
+            remove_trap(hook.address, hook.original_bytes);
         }
 
         return true;
@@ -123,7 +124,7 @@ hook::Handle HookManager::add_hook(const void* address, const void* detour) {
 
         detours.push_back(detour);
 
-        return new HookManager::Handle{ address, detour };
+        return new HookManager::Handle { address, detour };
     }
 }
 

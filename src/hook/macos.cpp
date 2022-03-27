@@ -55,7 +55,3 @@ bool MacOSX::initialize() {
 
     return sigaction(signal, &action, NULL) == 0;
 }
-
-const void* MacOSX::align_address(const void* address) {
-	return address; 
-}
