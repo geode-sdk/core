@@ -1,9 +1,8 @@
 #ifndef GEODE_CORE_META_PREPROC_HPP
 #define GEODE_CORE_META_PREPROC_HPP
 
-#if defined(GEODE_CALL)
-	#undef GEODE_CALL
-#endif
+#ifndef GEODE_CALL
+
 
 // Windows
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
@@ -67,5 +66,7 @@
     #define GEODE_DLL    GEODE_WINDOWS(__declspec(dllimport))
 #endif
 #define GEODE_API    GEODE_WINDOWS() // idk where this is
+
+#endif
 
 #endif /* GEODE_CORE_META_PREPROC_HPP */

@@ -19,7 +19,6 @@ namespace {
         const void** current = reinterpret_cast<const void**>(&context->uc_mcontext->__ss.__rip);
 
         Exception exception = {
-            signal_info->si_addr,
             ret,
             *current
         };
