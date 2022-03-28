@@ -16,11 +16,11 @@ namespace {
         ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
         const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__rsp);
-        const void** current = reinterpret_cast<const void**>(&context->uc_mcontext->__ss.__rip);
+        const void*& current = reinterpret_cast<const void*&>(context->uc_mcontext->__ss.__rip);
 
         Exception exception = {
-            ret,
-            *current
+        	current,
+            ret
         };
 
         HookManager::handler(exception);
