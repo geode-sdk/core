@@ -173,9 +173,9 @@ namespace geode::core::meta::x86 {
     public:
         // Just wrapping MyImpl.
         static Ret invoke(void* address, Args... all) {
-            /* The extra float and int here is so that we can grab placeholders.
+            /* The extra float and int here are so that we can grab placeholders.
             * If we don't have anything in XMM0 - 5 or ECX / EDX, we will use 
-            * this placeholder instead. The values are 314 to avoid unintentional
+            * these placeholders instead. The values are 314 to avoid unintentional
             * bugs (since 0 may work coincidentally).
             */
             return MyImpl::invoke(address, { all..., 314.0f, 314 });
