@@ -120,19 +120,6 @@ namespace geode::core::meta::x86 {
                 return from;
             }
 
-            // Grab only the stack values. For determining stack fixup.
-            static constexpr auto filter_stack() {
-                /* The size of our output may be shorter than the input.
-                * For the fourth time, we need to make a lambda for this.
-                */ 
-                constexpr auto arr_size = []() -> size_t {
-                    size_t size = 0;
-
-                    return size;
-                };
-                std::array<size_t, arr_size()> stack = {};
-            }
-
             // Annoyingly, unless we're using C++20, we can't eliminate these intermediates. (afaik)
             static constexpr auto to_arr = filter_to();
             static constexpr auto from_arr = filter_from();
@@ -186,6 +173,11 @@ namespace geode::core::meta::x86 {
     public:
         // Just wrapping MyImpl.
         static Ret invoke(void* address, Args... all) {
+            /* The extra float and int here is so that we can grab placeholders.
+            * If we don't have anything in XMM0 - 5 or ECX / EDX, we will use 
+            * this placeholder instead. The values are 314 to avoid unintentional
+            * bugs (since 0 may work coincidentally).
+            */
             return MyImpl::invoke(address, { all..., 314.0f, 314 });
         }
 
