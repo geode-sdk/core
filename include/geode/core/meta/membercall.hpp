@@ -1,18 +1,16 @@
 #ifndef GEODE_CORE_META_MEMBERCALL_HPP
 #define GEODE_CORE_META_MEMBERCALL_HPP
 
+#include "callconv.hpp"
 #include "tuple.hpp"
 #include "x86.hpp"
 
-#if 0
 namespace geode::core::meta::x86 {
     template <class Ret, class... Args>
     class Membercall : public CallConv<Ret, Args...> {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
         using MyConv = CallConv<Ret, Args...>;
-        // for some reason using definitions dont get inherited properly
-        using MyTuple = typename MyConv::MyTuple;
 
     private:
         class Sequences {
@@ -54,7 +52,7 @@ namespace geode::core::meta::x86 {
                 };
                 std::array<size_t, arr_size()> to = {};
 
-                // This is the index of the placeholder float and int, for clobbering SSEs and GPRs, respectively.
+                // These are the indices of the placeholder float and int, for clobbering SSEs and GPRs, respectively.
                 constexpr size_t CLOBBER_SSE = length;
                 constexpr size_t CLOBBER_GPR = length + 1;
 
@@ -102,12 +100,21 @@ namespace geode::core::meta::x86 {
                 constexpr size_t CLOBBER_GPR = length + 1;
 
                 if (length > 0 && is_gpr[reordered_arr[0]]) {
+                    // SSES + 3 = ECX
                     from[reordered_arr[0]] = SSES + 3;
                 }
 
                 for (size_t i = 1, offset = 0; i < length; ++i) {
                     size_t current = reordered_arr[i];
-                    if (is_sse[current])
+                    if (is_sse[current] && i < SSES + 1) {
+                        // If in SSE, retain index
+                        from[current] = i;
+                    }
+                    else {
+                        // If on stack, offset by 8 (6 SSE + 2 GPR registers available)
+                        from[current] = offset + SSES + 5;
+                        ++offset;
+                    }
                 }
 
                 return from;
@@ -131,44 +138,13 @@ namespace geode::core::meta::x86 {
             static constexpr auto from_arr = filter_from();
 
         public:
-            using to = arr_to_seq<to_arr>;
-            using from = arr_to_seq<from_arr>;
-        };
-        // Filters that will be passed to Tuple::filter.
-        template <size_t i, class Current, size_t c>
-        class filter_to {
-        public:
-            static constexpr bool result = 
-                (!gpr_passable<Current>::value || i != 0) &&
-                (!sse_passable<Current>::value || i > 3);
-
-            static constexpr size_t index = i;
-            static constexpr size_t counter = c;
-        };
-
-        template <size_t i, class Current, size_t stack_offset>
-        class filter_from {
-        private:
-            static constexpr bool sse = sse_passable<Current>::value && i <= 3 && i != 0;
-            static constexpr bool gpr = gpr_passable<Current>::value && i == 0;
-
-        public:
-            // We're not even really filtering, just reordering.
-            static constexpr bool result = true;
-
-            static constexpr size_t index = 
-                // If in GPR or SSE, retain index
-                (gpr || sse) ? i
-                // If on stack, offset by 4 (3 SSE + 1 GPR register(s) available)
-                : stack_offset + 4;
-
-            // If our output index is greater than 4, it has to be on stack. Increment.
-            static constexpr size_t counter = stack_offset + static_cast<size_t>(index >= 4);
+            using to = typename MyConv::template arr_to_seq<to_arr>;
+            using from = typename MyConv::template arr_to_seq<from_arr>;
         };
 
     private:
         // Where all the logic is actually implemented. Needs to be instantiated by Optcall, though.
-        template <class Class, class, class>
+        template <class Class, class>
         class Impl {
             static_assert(always_false<Class>, 
                 "Please report a bug to the Geode developers! This should never be reached.\n"
@@ -191,18 +167,10 @@ namespace geode::core::meta::x86 {
 
             template <Ret(* detour)(Args...)>
             static Ret __vectorcall wrapper(
-                float,
-                typename MyConv::template type_if<1, sse_passable, float> f1,
-                typename MyConv::template type_if<2, sse_passable, float> f2,
-                typename MyConv::template type_if<3, sse_passable, float> f3,
-                float,
-                float,
-                typename MyConv::template type_if<0, gpr_passable, int> i0,
-                int,
-                // Not sure why this doesn't work otherwise, but oh well...
-                typename MyConv::template type_at_wrap<to>... rest
+                // It's wrapped to stop MSVC from giving me error messages with internal compiler info. WTF.
+                typename Tuple<Args..., float, int>::template type_at_wrap<to>... raw
             ) {
-                auto all = Tuple<>::make(i0, f1, f2, f3, rest...);
+                auto all = Tuple<>::make(raw...);
                 return detour(all.template at<from>()...);
             }
         };
@@ -227,6 +195,5 @@ namespace geode::core::meta::x86 {
         }
     };
 }
-#endif
 
 #endif /* GEODE_CORE_META_MEMBERCALL_HPP */

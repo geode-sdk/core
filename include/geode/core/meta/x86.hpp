@@ -1,6 +1,8 @@
 #ifndef GEODE_CORE_META_X86_HPP
 #define GEODE_CORE_META_X86_HPP
 
+#include "common.hpp"
+
 #include <array>
 
 namespace geode::core::meta::x86 {
@@ -18,7 +20,6 @@ namespace geode::core::meta::x86 {
         !std::is_class_v<Class> &&
         !sse_passable<Class>) ||
         std::is_member_function_pointer_v<Class>;
-
 
     template <class... Classes>
     static inline constexpr std::array<size_t, sizeof...(Classes)> reorder_structs() {

@@ -1,6 +1,7 @@
 #ifndef GEODE_CORE_META_OPTCALL_HPP
 #define GEODE_CORE_META_OPTCALL_HPP
 
+#include "callconv.hpp"
 #include "tuple.hpp"
 #include "x86.hpp"
 
@@ -10,8 +11,6 @@ namespace geode::core::meta::x86 {
     private:
         // Metaprogramming / typedefs we need for the rest of the class.
         using MyConv = CallConv<Ret, Args...>;
-        // For some reason, using definitions dont get inherited properly.
-        using MyTuple = typename MyConv::MyTuple;
 
     private:
         // These go in a class to not pollute the namespace.
@@ -148,9 +147,9 @@ namespace geode::core::meta::x86 {
             static constexpr auto stack_arr = filter_stack();
 
         public:
-            using to = arr_to_seq<to_arr>;
-            using from = arr_to_seq<from_arr>;
-            using stack = arr_to_seq<stack_arr>;
+            using to = typename MyConv::template arr_to_seq<to_arr>;
+            using from = typename MyConv::template arr_to_seq<from_arr>;
+            using stack = typename MyConv::template arr_to_seq<stack_arr>;
         };
 
     private:
@@ -171,14 +170,14 @@ namespace geode::core::meta::x86 {
         private:
             static constexpr size_t fix =
                 (std::is_class_v<Ret> ? stack_fix<Ret> : 0)
-                + stack_fix<typename MyTuple::template type_at<stack>...>;
+                + stack_fix<typename Tuple<Args...>::template type_at<stack>...>;
 
         public:
             static Ret invoke(void* address, const Tuple<Args..., float>& all) {
                 if constexpr (!std::is_same_v<Ret, void>) {
                     Ret ret = reinterpret_cast<
                         Ret(__vectorcall*)(
-                            typename Tuple<Args..., float>::template type_at<to>...
+                            decltype(all.template at<to>())...
                         )
                     >(address)(all.template at<to>()...);
 
@@ -191,7 +190,7 @@ namespace geode::core::meta::x86 {
                 else {
                     reinterpret_cast<
                         Ret(__vectorcall*)(
-                            typename Tuple<Args..., float>::template type_at<to>...
+                            decltype(all.template at<to>())...
                         )
                     >(address)(all.template at<to>()...);
 
@@ -203,8 +202,8 @@ namespace geode::core::meta::x86 {
 
             template <Ret(* detour)(Args...)>
             static Ret __cdecl wrapper(
-                // Not sure why this doesn't work otherwise, but oh well...
-                typename MyConv::template type_at_wrap<stack>... rest
+                // It's wrapped to stop MSVC from giving me error messages with internal compiler info. WTF.
+                typename Tuple<Args...>::template type_at_wrap<stack>... rest
             ) {
                 Register<double> f0, f1, f2, f3;
                 Register<void*> i0, i1;

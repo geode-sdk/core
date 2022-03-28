@@ -77,6 +77,24 @@ namespace geode::core::meta {
     public:
         template <size_t i>
         using type_at = decltype(std::declval<MyElements>().template at<i>());
+
+    private:
+        template <size_t i, bool>
+        class type_at_wrap_impl {
+        public:
+            using result = void;
+        };
+
+        template <size_t i>
+        class type_at_wrap_impl<i, true> {
+        public:
+            using result = type_at<i>;
+        };
+
+    public:
+        // I dunno why, but MSVC literally shows internal compiler structures if I don't wrap this sometimes.
+        template <size_t i>
+        using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Rest) + 1)>::result;
     };
 }
 

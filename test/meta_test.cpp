@@ -41,9 +41,9 @@ std::string optcall_test(float a, int b, int c, float d, float e) {
 
 std::string membercall_test(int a, int b, int c, float d, float e) {
     std::cout << "ecx " << a << '\n';
+    std::cout << "xmm3 " << d << '\n';
     std::cout << "stack 0 " << b << '\n';
     std::cout << "stack 1 " << c << '\n';
-    std::cout << "xmm3 " << d << '\n';
     std::cout << "stack 2 " << e << '\n';
     return std::string("hello member");
 }
@@ -76,9 +76,9 @@ int main() {
     // Hi 234
     f2(6.0f, 2.0f, 3.0f, 5.0f, 2234, 2, 234);
 
-    //meta::Function<void(void*, float, int), meta::x86::Membercall> f3 = test1;
-    // 455
-    //f3(nullptr, 23.0f, 455);
+    meta::Function<void(void*, float, float, int), meta::x86::Membercall> f3 = test1;
+    // Hi 455
+    f3(nullptr, 23.0f, 52.0f, 455);
 
     to_hook(6);
     to_hook(24);
@@ -108,15 +108,12 @@ int main() {
     std::cout << "thiscall wrapper returned \"" << thiscall_ret << "\"\n\n";
 
     // ecx 3
+    // xmm3 1908.6
     // stack 0 555
     // stack 1 666
-    // xmm3 1908.0
-    // stack 2 777
-    //auto membercall = get_wrapper<&membercall_test, meta::x86::Membercall>::result;
+    // stack 2 777.2
+    auto membercall = get_wrapper<&membercall_test, meta::x86::Membercall>::result;
                                   // xmm0,  xmm1,    xmm2,    xmm3,    xmm4,   xmm5, ecx, edx, stack...
-    //auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.0f, 222.0f, 223.0f, 3, 45, 555, 666, 777.0f);
-    //std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
-    
-    //result = wrapper(0.123f, 1907.f, 1908.f, 3.123f, 1909.f, 1910.f, 2337, 123, 420, 1234.5f);
-    //std::cout << "another result \"" << result << '"' << std::endl;
+    auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.6f, 222.0f, 223.0f, 3, 45, 555, 666, 777.2f);
+    std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
 }

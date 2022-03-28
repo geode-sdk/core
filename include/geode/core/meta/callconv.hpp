@@ -1,6 +1,8 @@
 #ifndef GEODE_CORE_META_CALLCONV_HPP
 #define GEODE_CORE_META_CALLCONV_HPP
 
+#include "tuple.hpp"
+
 #include <array>
 #include <utility>
 
@@ -14,57 +16,6 @@ namespace geode::core::meta {
     class CallConv {
     protected:
         using MyTuple = Tuple<Args...>;
-
-        template <bool, size_t i>
-        class type_at_wrap_impl {
-        public:
-            using result = void;
-        };
-
-        template <size_t i>
-        class type_at_wrap_impl<true, i> {
-        public:
-            using result = typename MyTuple::template type_at<i>;
-        };
-
-        template <size_t i>
-        using type_at_wrap = typename type_at_wrap_impl<(i < MyTuple::size), i>::result;
-
-        template <size_t i>
-        static constexpr decltype(auto) at_wrap(const MyTuple& tuple) {
-            if constexpr (i < MyTuple::size) {
-                return tuple.template at<i>();
-            }
-            else {
-                return 0;
-            }
-        }
-
-        template <
-            size_t i,
-            template <class> class Pred,
-            class Else
-        >
-        using type_if = 
-            typename ternary<
-                    (MyTuple::size > i) &&
-                    Pred<type_at_wrap<i>>::value
-                >::template type<
-                        type_at_wrap<i>,
-                        Else
-                    >;
-
-        template <
-            size_t i,
-            template <class> class Pred,
-            class Else
-        >
-        static constexpr decltype(auto) value_if(const MyTuple& tuple, const Else e) {
-            return ternary<
-                    (MyTuple::size > i) &&
-                    Pred<type_at_wrap<i>>::value
-                >::val(at_wrap<i>(tuple), e);
-        }
 
         template <auto>
         class arr_to_seq_impl;
