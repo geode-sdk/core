@@ -130,7 +130,7 @@ namespace geode::core::meta::x86 {
         };
 
     private:
-        // Where all the logic is actually implemented. Needs to be instantiated by Optcall, though.
+        // Where all the logic is actually implemented.
         template <class Class, class>
         class Impl {
             static_assert(always_false<Class>, 

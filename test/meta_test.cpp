@@ -30,21 +30,25 @@ int hook1(int x) {
     return to_hook(x + 6);
 }
 
-std::string optcall_test(float a, int b, int c, float d, float e) {
+std::string optcall_test(std::string s1, float a, std::string s2, int b, int c, float d, float e) {
     std::cout << "xmm0 " << a << '\n';
     std::cout << "ecx " << b << '\n';
     std::cout << "edx " << c << '\n';
     std::cout << "xmm3 " << d << '\n';
     std::cout << "stack 0 " << e << '\n';
+    std::cout << "stack 1 " << s1 << '\n';
+    std::cout << "stack 2 " << s2 << '\n';
     return std::string("hello ") + std::to_string(e);
 }
 
-std::string membercall_test(int a, int b, int c, float d, float e) {
+std::string membercall_test(int a, std::string s1, int b, int c, float d, std::string s2, float e) {
     std::cout << "ecx " << a << '\n';
     std::cout << "xmm3 " << d << '\n';
     std::cout << "stack 0 " << b << '\n';
     std::cout << "stack 1 " << c << '\n';
     std::cout << "stack 2 " << e << '\n';
+    std::cout << "stack 3 " << s1 << '\n';
+    std::cout << "stack 4 " << s2 << '\n';
     return std::string("hello member");
 }
 
@@ -98,7 +102,7 @@ int main() {
         mov edx, 420
         movss xmm3, fl3
     }
-    auto optcall_ret = optcall(1337.f);
+    auto optcall_ret = optcall(1337.0f, "Hell", "Lo");
     // "hello 1337"
     std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n\n";
 
@@ -114,6 +118,6 @@ int main() {
     // stack 2 777.2
     auto membercall = get_wrapper<&membercall_test, meta::x86::Membercall>::result;
                                   // xmm0,  xmm1,    xmm2,    xmm3,    xmm4,   xmm5, ecx, edx, stack...
-    auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.6f, 222.0f, 223.0f, 3, 45, 555, 666, 777.2f);
+    auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.6f, 222.0f, 223.0f, 3, 45, 555, 666, 777.2f, "Goo", "Dbye");
     std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
 }

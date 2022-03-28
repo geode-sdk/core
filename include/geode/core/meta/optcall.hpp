@@ -128,13 +128,14 @@ namespace geode::core::meta::x86 {
 
                 for (size_t in = 0, out = 0, gprs = 0; in < length; ++in) {
                     size_t current = reordered_arr[in];
-                    if (is_gpr[current]) {
-                        ++gprs;
-                    }
-                    if ((!is_sse[current] || in > SSES) &&
-                        (!is_gpr[current] || gprs > GPRS)) {
+                    if ((!is_sse[current] || in >= SSES) &&
+                        (!is_gpr[current] || gprs >= GPRS)) {
                         stack[out] = current;
                         ++out;
+                    }
+
+                    if (is_gpr[current]) {
+                        ++gprs;
                     }
                 }
 
@@ -153,7 +154,7 @@ namespace geode::core::meta::x86 {
         };
 
     private:
-        // Where all the logic is actually implemented. Needs to be instantiated by Optcall, though.
+        // Where all the logic is actually implemented.
         template <class Class, class, class>
         class Impl {
             static_assert(always_false<Class>, 

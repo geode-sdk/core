@@ -43,7 +43,7 @@ namespace geode::core::meta {
         }
     };
 
-    // member functions.
+    // Member functions.
     template <
         class Ret, class Parent, class... Args,
         Ret(Parent::* address)(Args...),
@@ -51,7 +51,7 @@ namespace geode::core::meta {
         template <class, class...> class Conv
     >
     class Hook<address, detour, Conv> {
-        // deal with this later lol
+        // Deal with this later lol
     };
 }
 

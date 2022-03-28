@@ -26,7 +26,6 @@ namespace geode::core::meta {
     class Function<Ret(Args...), Conv> {
     private:
         using MyConv = Conv<Ret, Args...>;
-        using MyTuple = Tuple<Args...>;
 
     private:
         void* addr;
