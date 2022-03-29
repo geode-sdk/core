@@ -25,7 +25,7 @@ namespace geode::core::meta::x86 {
             static constexpr size_t GPRS = 2;
             static constexpr bool is_gpr[length] = { gpr_passable<Args>... };
             
-            static constexpr auto reordered_arr = reorder_structs<Args...>();
+            static constexpr auto reordered_arr = reorder_pack<Args...>();
 
             // Setup call from our caller, to "foreign" function
             static constexpr auto filter_to() {

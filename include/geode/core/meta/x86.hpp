@@ -22,25 +22,26 @@ namespace geode::core::meta::x86 {
         std::is_member_function_pointer_v<Class>;
 
     template <class... Classes>
-    static inline constexpr std::array<size_t, sizeof...(Classes)> reorder_structs() {
+    static inline constexpr std::array<size_t, sizeof...(Classes)> reorder_pack() {
         constexpr size_t length = sizeof...(Classes);
-        constexpr bool is_struct[] = {
-            std::is_class_v<Classes>...
+        constexpr bool should_reorder[] = {
+            std::is_class_v<Classes> && 
+            sizeof(Classes) > sizeof(void*)...
         };
 
         std::array<size_t, length> reordered = {};
         size_t out = 0;
-        // The non-structs go first.
+        // Non-reordered go first.
         for (size_t in = 0; in < length; ++in) {
-            if (!is_struct[in]) {
+            if (!should_reorder[in]) {
                 reordered[out] = in;
                 ++out;
             }
         }
 
-        // The structs go last.
+        // Reordered go last.
         for (size_t in = 0; in < length; ++in) {
-            if (is_struct[in]) {
+            if (should_reorder[in]) {
                 reordered[out] = in;
                 ++out;
             }
@@ -80,6 +81,37 @@ namespace geode::core::meta::x86 {
             return u.to;
         }
     };
+
+    // Ignore this for now, it's for discarding calling convention qualifier later.
+    #if 0
+    template <class Func>
+    class remove_conv {
+    public:
+        using result = Func;
+    };
+
+    // We all hate macros but I'd say this is a good use case.
+    #define REMOVE_FOR(CC) \
+    template <class Ret, class... Args> \
+    class remove_conv<Ret(CC*)(Args...)> { \
+    public: \
+        using result = Ret(*)(Args...); \
+    }; \
+    \
+    template <class Ret, class Parent, class... Args> \
+    class remove_conv<Ret(CC Parent::*)(Args...)> { \
+    public: \
+        using result = Ret(Parent::*)(Args...); \
+    }
+
+    REMOVE_FOR(__cdecl);
+    REMOVE_FOR(__stdcall);
+    REMOVE_FOR(__thiscall);
+    REMOVE_FOR(__fastcall);
+    REMOVE_FOR(__vectorcall);
+
+    #undef REMOVE_FOR
+    #endif
 }
 
 #endif /* GEODE_CORE_META_X86_HPP */
