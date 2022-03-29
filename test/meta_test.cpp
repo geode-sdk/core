@@ -71,10 +71,10 @@ struct get_wrapper<func, Conv> {
 
 int main() {
     //Hook<&to_hook, &hook1, x86::Optcall> hook;
-    Function<int(int, int, int), x86::Optcall> f1 = test1;
+    Function<int(int, std::string, int, float, int, float, bool), x86::Optcall> f1 = test1;
     
     // Hi 4
-    int val = f1(2, 3, 4);
+    int val = f1(2, "lol", 2, 3.2f, 4, 5.6f, false);
 
     meta::Function<void(float, float, float, float, int, int, int), meta::x86::Optcall> f2 = test1;
     // Hi 234
