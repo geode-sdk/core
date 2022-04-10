@@ -6,13 +6,13 @@
 namespace geode::core::hook {
     class WindowsX86 : public Platform<WindowsX86> {
     public:
-    #if defined(NDEBUG)
+#if defined(NDEBUG)
         // int3
         static constexpr char trap[] = { '\xCC' };
-    #else
+#else
         // ud2
         static constexpr char trap[] = { '\x0F', '\x0B' };
-    #endif
+#endif
 
     public:
         static bool write_memory(void* to, const void* from, size_t size);

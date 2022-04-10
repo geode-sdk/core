@@ -1,4 +1,5 @@
 #include "windows.hpp"
+
 #include "impl.hpp"
 
 #include <Windows.h>
@@ -9,13 +10,13 @@ using namespace geode::core::hook;
 
 namespace {
     LONG WINAPI handler(EXCEPTION_POINTERS* info) {
-    #if defined(_WIN64)
+#if defined(_WIN64)
         void* ret = *reinterpret_cast<void**>(info->ContextRecord->Rsp);
         const void*& address = reinterpret_cast<const void*&>(info->ContextRecord->Rip);
-    #elif defined(_WIN32)
+#elif defined(_WIN32)
         void* ret = *reinterpret_cast<void**>(info->ContextRecord->Esp);
         const void*& address = reinterpret_cast<const void*&>(info->ContextRecord->Eip);
-    #endif
+#endif
 
         Exception exception = { address, ret };
 

@@ -10,12 +10,14 @@ void HookManager::add_trap(const void* address, char buffer[]) {
     if (buffer != nullptr) {
         TargetPlatform::write_memory(buffer, addr, sizeof(trap));
     }
-    
+
     TargetPlatform::write_memory(addr, trap, sizeof(trap));
 }
 
 void HookManager::remove_trap(const void* address, char buffer[]) {
-    TargetPlatform::write_memory(const_cast<void*>(address), buffer, sizeof(TargetPlatform::trap()));
+    TargetPlatform::write_memory(
+        const_cast<void*>(address), buffer, sizeof(TargetPlatform::trap())
+    );
 }
 
 bool HookManager::find_in_hooks(Exception& info) {
@@ -38,10 +40,10 @@ bool HookManager::find_in_hooks(Exception& info) {
             }
             else {
                 frame_pair = result.first;
-                /* we only want to add if it's not a tail call. 
-                * if we add in a tail call, the original bytes will be
-                * the trap instruction and it'll mess up.
-                */
+                /* we only want to add if it's not a tail call.
+                 * if we add in a tail call, the original bytes will be
+                 * the trap instruction and it'll mess up.
+                 */
                 add_trap(info.return_address, frame_pair->second.original_bytes);
             }
         }
@@ -49,12 +51,12 @@ bool HookManager::find_in_hooks(Exception& info) {
         CallFrame& frame = frame_pair->second;
         frame.parent = &hook;
         frame.address = info.return_address;
-        
+
         hook.frames.push_back(&frame);
 
         // redirect to next detour
         info.address = hook.detours[hook.frames.size() - 1];
-        
+
         // specialization for last detour: original calls don't call next detour
         if (hook.frames.size() == hook.detours.size()) {
             remove_trap(hook.address, hook.original_bytes);
@@ -76,13 +78,11 @@ bool HookManager::find_in_frames(Exception& info) {
         if (hook.frames.size() == hook.detours.size()) {
             add_trap(hook.address, nullptr);
         }
-        
+
         // pop each tail call
         size_t count = 1;
         if (hook.frames.size() > 1) {
-            for (auto i = hook.frames.rbegin() + 1;
-                i != hook.frames.rend();
-                ++i) {
+            for (auto i = hook.frames.rbegin() + 1; i != hook.frames.rend(); ++i) {
                 if ((*i)->address != info.address) break;
                 ++count;
             }
@@ -106,13 +106,13 @@ bool HookManager::handler(Exception& info) {
 
 hook::Handle HookManager::add_hook(const void* address, const void* detour) {
     auto& hook = all_hooks()[address];
-    
+
     auto& detours = hook.detours;
     auto i = std::find(detours.begin(), detours.end(), detour);
     if (i != detours.end()) {
         /* we're not allowing one detour to be assigned
-        * in the hook chain multiple times.
-        */
+         * in the hook chain multiple times.
+         */
         return nullptr;
     }
     else {

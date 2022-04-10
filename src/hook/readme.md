@@ -1,4 +1,4 @@
-# geode::core::hook
+#geode::core::hook
 
 ### Abstract
 
@@ -39,16 +39,17 @@ private:
 
         char original_bytes[sizeof(trap)] = {};
     }
-  
+
     class CallFrame {
         const void* address = nullptr;
         HookChain* parent = nullptr;
         char original_bytes[sizeof(trap)] = {};
     }
-  
-    static inline std::map<void*, HookChain> all_hooks = {};
+
+    static inline std::map<void*, HookChain>
+        all_hooks = {};
     static inline std::map<void*, CallFrame> all_frames = {};
-  
+
 public:
     struct Exception {
         const void* address = nullptr;
@@ -56,7 +57,8 @@ public:
         const void*& instruction_pointer;
     }
 
-    static bool handler(Exception& info);
+    static bool
+        handler(Exception& info);
 }
 ```
 

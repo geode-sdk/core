@@ -1,13 +1,13 @@
 #include "macos.hpp"
+
 #include "impl.hpp"
 
-#include <mach/task.h>
+#include <mach/mach_init.h> /* mach_task_self()     */
 #include <mach/mach_port.h>
-#include <mach/mach_vm.h>       /* mach_vm_*            */
-#include <mach/mach_init.h>     /* mach_task_self()     */
-
-#include <signal.h>             /* sigaction            */
-#include <sys/ucontext.h>       /* ucontext_t           */
+#include <mach/mach_vm.h> /* mach_vm_*            */
+#include <mach/task.h>
+#include <signal.h>       /* sigaction            */
+#include <sys/ucontext.h> /* ucontext_t           */
 
 using namespace geode::core::hook;
 
@@ -18,10 +18,7 @@ namespace {
         const void* ret = *reinterpret_cast<void**>(context->uc_mcontext->__ss.__rsp);
         const void*& current = reinterpret_cast<const void*&>(context->uc_mcontext->__ss.__rip);
 
-        Exception exception = {
-        	current,
-            ret
-        };
+        Exception exception = { current, ret };
 
         HookManager::handler(exception);
     }
@@ -29,22 +26,26 @@ namespace {
 
 bool MacOSX::write_memory(void* to, const void* from, size_t size) {
     kern_return_t ret;
-    
-    ret = mach_vm_protect(mach_task_self(), (mach_vm_address_t)to, size, FALSE, VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ);
+
+    ret = mach_vm_protect(
+        mach_task_self(), (mach_vm_address_t)to, size, FALSE,
+        VM_PROT_COPY | VM_PROT_EXECUTE | VM_PROT_WRITE | VM_PROT_READ
+    );
     if (ret != KERN_SUCCESS) return false;
 
-    ret = mach_vm_write(mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size);
+    ret = mach_vm_write(
+        mach_task_self(), (mach_vm_address_t)to, (vm_offset_t)from, (mach_msg_type_number_t)size
+    );
 
     return ret == KERN_SUCCESS;
 }
 
 bool MacOSX::initialize() {
-	task_set_exception_ports(
-		mach_task_self(),
-		EXC_MASK_BAD_INSTRUCTION,
-		MACH_PORT_NULL,//m_exception_port,
-		EXCEPTION_DEFAULT,
-		0); 
+    task_set_exception_ports(
+        mach_task_self(), EXC_MASK_BAD_INSTRUCTION,
+        MACH_PORT_NULL, // m_exception_port,
+        EXCEPTION_DEFAULT, 0
+    );
     struct sigaction action;
     memset(&action, '\0', sizeof(action));
     action.sa_sigaction = &handler;

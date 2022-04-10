@@ -2,9 +2,8 @@
 #define GEODE_CORE_HOOK_IMPL_HPP
 
 #include <hook.hpp>
-
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 #if defined(GEODE_IS_WINDOWS)
     #include "windows.hpp"
@@ -50,8 +49,8 @@ namespace geode::core::hook {
 
     private:
         /* these don't check char buffer bounds. it should have sizeof(trap) size.
-        * pass nullptr to add_trap if you don't want to save the old bytes into a buffer.
-        */
+         * pass nullptr to add_trap if you don't want to save the old bytes into a buffer.
+         */
 
         static void add_trap(const void* address, char buffer[]);
         static void remove_trap(const void* address, char buffer[]);

@@ -1,11 +1,11 @@
 #include "ios.hpp"
+
 #include "impl.hpp"
 
-#include <mach/vm_map.h>       /* mach_vm_*            */
-#include <mach/mach_init.h>     /* mach_task_self()     */
-
-#include <signal.h>             /* sigaction            */
-#include <sys/ucontext.h>       /* ucontext_t           */
+#include <mach/mach_init.h> /* mach_task_self()     */
+#include <mach/vm_map.h>    /* mach_vm_*            */
+#include <signal.h>         /* sigaction            */
+#include <sys/ucontext.h>   /* ucontext_t           */
 
 #include <mach-o/dyld.h>
 
@@ -23,6 +23,7 @@ namespace {
     void handler(int signal, siginfo_t* signal_info, void* vcontext) {
         ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
+<<<<<<< HEAD
         const void* ret = reinterpret_cast<void*>(context->uc_mcontext->__ss.__lr);
         const void* current = reinterpret_cast<void*>(context->uc_mcontext->__ss.__pc);
 
@@ -31,6 +32,15 @@ namespace {
             ret
         };
 
+=======
+        const void* ret = reinterpret_cast<void*>(_ios_get_reg(context->uc_mcontext->__ss, lr));
+
+        const void** current = const_cast<const void**>(
+            reinterpret_cast<void**>(&_ios_get_reg(context->uc_mcontext->__ss, pc))
+        );
+
+        Exception exception = { signal_info->si_addr, ret, *current };
+>>>>>>> 27fa723a90793f1a89e2179591479cf0854eba5c
         HookManager::handler(exception);
     }
 }
@@ -48,10 +58,9 @@ bool iOS::initialize() {
 
     int signal = SIGTRAP;
 
-
     return sigaction(signal, &action, NULL) == 0;
 }
 
 const void* iOS::align_address(const void* address) {
-	return address; 
+    return address;
 }

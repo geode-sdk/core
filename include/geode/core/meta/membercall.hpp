@@ -17,19 +17,19 @@ namespace geode::core::meta::x86 {
         private:
             // These are required for proper reordering.
             static constexpr size_t length = sizeof...(Args);
-            
+
             static constexpr size_t SSES = 3;
             static constexpr bool is_sse[length] = { sse_passable<Args>... };
 
             static constexpr bool is_gpr[length] = { gpr_passable<Args>... };
-            
+
             static constexpr auto reordered_arr = reorder_pack<Args...>();
 
             // Setup call from our caller, to "foreign" function
             static constexpr auto filter_to() {
                 /* The size of our output may be longer than the input.
-                * For the third time, annoyingly, we need to make a lambda for this.
-                */ 
+                 * For the third time, annoyingly, we need to make a lambda for this.
+                 */
                 constexpr auto arr_size = []() -> size_t {
                     // Magic constant 5: XMM0, XMM4, XMM5, ECX, and EDX.
                     size_t size = length + SSES + 5;
@@ -40,8 +40,8 @@ namespace geode::core::meta::x86 {
                     }
 
                     /* We assume there are no SSES initially.
-                    * Any SSES we encounter, we have to remove a "duplicate".
-                    */
+                     * Any SSES we encounter, we have to remove a "duplicate".
+                     */
                     for (size_t i = 1; i < SSES + 1; ++i) {
                         if (i < length && is_sse[reordered_arr[i]]) {
                             --size;
@@ -52,7 +52,9 @@ namespace geode::core::meta::x86 {
                 };
                 std::array<size_t, arr_size()> to = {};
 
-                // These are the indices of the placeholder float and int, for clobbering SSEs and GPRs, respectively.
+                /* These are the indices of the placeholder float and int, for clobbering SSEs and
+                 * GPRs, respectively.
+                 */
                 constexpr size_t CLOBBER_SSE = length;
                 constexpr size_t CLOBBER_GPR = length + 1;
 
@@ -133,28 +135,27 @@ namespace geode::core::meta::x86 {
         // Where all the logic is actually implemented.
         template <class Class, class>
         class Impl {
-            static_assert(always_false<Class>, 
+            static_assert(
+                always_false<Class>,
                 "Please report a bug to the Geode developers! This should never be reached.\n"
-                "SFINAE didn't reach the right overload!");
+                "SFINAE didn't reach the right overload!"
+            );
         };
 
         template <size_t... to, size_t... from>
-        class Impl<
-            std::index_sequence<to...>, 
-            std::index_sequence<from...>
-        > {
+        class Impl<std::index_sequence<to...>, std::index_sequence<from...>> {
         public:
             static Ret invoke(void* address, const Tuple<Args..., float, int>& all) {
-                return reinterpret_cast<
-                    Ret(__vectorcall*)(
-                        typename Tuple<Args..., float, int>::template type_at<to>...
-                    )
-                >(address)(all.template at<to>()...);
+                return reinterpret_cast<Ret(__vectorcall*)(
+                    typename Tuple<Args..., float, int>::template type_at<to>...
+                )>(address)(all.template at<to>()...);
             }
 
-            template <Ret(* detour)(Args...)>
+            template <Ret (*detour)(Args...)>
             static Ret __vectorcall wrapper(
-                // It's wrapped to stop MSVC from giving me error messages with internal compiler info. WTF.
+                /* It's wrapped to stop MSVC from giving me error messages with internal compiler
+                 * info. WTF.
+                 */
                 typename Tuple<Args..., float, int>::template type_at_wrap<to>... raw
             ) {
                 auto all = Tuple<>::make(raw...);
@@ -164,24 +165,20 @@ namespace geode::core::meta::x86 {
 
     private:
         // Putting it all together: instantiating Impl with our filters.
-        using MyImpl = 
-            Impl<
-                typename Sequences::to,
-                typename Sequences::from
-            >;
+        using MyImpl = Impl<typename Sequences::to, typename Sequences::from>;
 
     public:
         // Just wrapping MyImpl.
         static Ret invoke(void* address, Args... all) {
             /* The extra float and int here are so that we can grab placeholders.
-            * If we don't have anything in XMM0 - 5 or ECX / EDX, we will use 
-            * these placeholders instead. The values are 314 to avoid unintentional
-            * bugs (since 0 may work coincidentally).
-            */
+             * If we don't have anything in XMM0 - 5 or ECX / EDX, we will use
+             * these placeholders instead. The values are 314 to avoid unintentional
+             * bugs (since 0 may work coincidentally).
+             */
             return MyImpl::invoke(address, { all..., 314.0f, 314 });
         }
 
-        template <Ret(* detour)(Args...)>
+        template <Ret (*detour)(Args...)>
         static constexpr decltype(auto) get_wrapper() {
             return &MyImpl::template wrapper<detour>;
         }

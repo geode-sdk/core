@@ -1,8 +1,8 @@
 #include <geode/core/meta/function.hpp>
 #include <geode/core/meta/hook.hpp>
+#include <geode/core/meta/membercall.hpp>
 #include <geode/core/meta/optcall.hpp>
 #include <geode/core/meta/thiscall.hpp>
-#include <geode/core/meta/membercall.hpp>
 #include <iostream>
 #include <string>
 
@@ -30,15 +30,22 @@ int hook1(int x) {
     return to_hook(x + 6);
 }
 
-std::string optcall_test(std::string s1, float a, std::string s2, int b, int c, float d, float e) {
-    std::cout << "xmm0 " << a << '\n';
-    std::cout << "ecx " << b << '\n';
-    std::cout << "edx " << c << '\n';
-    std::cout << "xmm3 " << d << '\n';
-    std::cout << "stack 0 " << e << '\n';
-    std::cout << "stack 1 " << s1 << '\n';
-    std::cout << "stack 2 " << s2 << '\n';
-    return std::string("hello ") + std::to_string(e);
+struct Small {
+    char value;
+};
+
+std::string optcall_test(
+    std::string s1, float f1, std::string s2, int i1, Small sm1, float f2, int i2, float f3
+) {
+    std::cout << "xmm0 " << f1 << '\n';
+    std::cout << "ecx " << i1 << '\n';
+    std::cout << "stack 0 " << sm1.value << '\n';
+    std::cout << "xmm3 " << f2 << '\n';
+    std::cout << "edx " << i2 << '\n';
+    std::cout << "stack 1 " << f3 << '\n';
+    std::cout << "stack 2 " << s1 << '\n';
+    std::cout << "stack 3 " << s2 << '\n';
+    return std::string("hello ") + std::to_string(f3);
 }
 
 std::string membercall_test(int a, std::string s1, int b, int c, float d, std::string s2, float e) {
@@ -61,18 +68,15 @@ std::string thiscall_test(int ecx, float stack) {
 template <auto, template <class, class...> class>
 struct get_wrapper;
 
-template <
-    class Ret, class... Args, 
-    Ret(* func)(Args...),
-    template <class, class...> class Conv>
+template <class Ret, class... Args, Ret (*func)(Args...), template <class, class...> class Conv>
 struct get_wrapper<func, Conv> {
     static constexpr auto result = Conv<Ret, Args...>::template get_wrapper<func>();
 };
 
 int main() {
-    //Hook<&to_hook, &hook1, x86::Optcall> hook;
+    // Hook<&to_hook, &hook1, x86::Optcall> hook;
     Function<int(int, std::string, int, float, int, float, bool), x86::Optcall> f1 = test1;
-    
+
     // Hi 4
     int val = f1(2, "lol", 2, 3.2f, 4, 5.6f, false);
 
@@ -91,9 +95,12 @@ int main() {
     // expected:
     // xmm0 0.123
     // ecx 123
-    // edx 420
+    // stack 0 x
     // xmm3 3.123
-    // stack 0 1337
+    // edx 420
+    // stack 1 1337.3
+    // stack 2 Hell
+    // stack 3 Lo
     float fl0 = 0.123f;
     float fl3 = 3.123f;
     __asm {
@@ -102,7 +109,7 @@ int main() {
         mov edx, 420
         movss xmm3, fl3
     }
-    auto optcall_ret = optcall(1337.0f, "Hell", "Lo");
+    auto optcall_ret = optcall({ 'x' }, 1337.3f, "Hell", "Lo");
     // "hello 1337"
     std::cout << "optcall wrapper returned \"" << optcall_ret << "\"\n\n";
 
@@ -117,7 +124,9 @@ int main() {
     // stack 1 666
     // stack 2 777.2
     auto membercall = get_wrapper<&membercall_test, meta::x86::Membercall>::result;
-                                  // xmm0,  xmm1,    xmm2,    xmm3,    xmm4,   xmm5, ecx, edx, stack...
-    auto membercall_ret = membercall(69.0f, 2333.0f, 1333.0f, 1908.6f, 222.0f, 223.0f, 3, 45, 555, 666, 777.2f, "Goo", "Dbye");
+    // xmm0,  xmm1,    xmm2,    xmm3,    xmm4,   xmm5, ecx, edx, stack...
+    auto membercall_ret = membercall(
+        69.0f, 2333.0f, 1333.0f, 1908.6f, 222.0f, 223.0f, 3, 45, 555, 666, 777.2f, "Goo", "Dbye"
+    );
     std::cout << "membercall wrapper returned \"" << membercall_ret << "\"\n\n";
 }

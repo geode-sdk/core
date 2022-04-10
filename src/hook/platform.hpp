@@ -4,8 +4,8 @@
 #include <cstddef>
 
 /* Platform template for platforms.
-* In a different header to avoid cyclic dependencies.
-*/
+ * In a different header to avoid cyclic dependencies.
+ */
 namespace geode::core::hook {
     template <class T>
     class Platform {
