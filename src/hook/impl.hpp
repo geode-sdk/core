@@ -8,10 +8,10 @@
 
 #if defined(GEODE_IS_WINDOWS)
     #include "windows.hpp"
-#elif defined(GEODE_IS_MACOS)
-    #include "macos.hpp"
 #elif defined(GEODE_IS_IOS)
     #include "ios.hpp"
+#elif defined(GEODE_IS_MACOS)
+    #include "macos.hpp"
 #endif
 
 namespace geode::core::hook {

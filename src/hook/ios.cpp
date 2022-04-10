@@ -7,6 +7,8 @@
 #include <signal.h>             /* sigaction            */
 #include <sys/ucontext.h>       /* ucontext_t           */
 
+#include <mach-o/dyld.h>
+
 using namespace geode::core::hook;
 
 #if __DARWIN_OPAQUE_ARM_THREAD_STATE64
@@ -21,15 +23,14 @@ namespace {
     void handler(int signal, siginfo_t* signal_info, void* vcontext) {
         ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
-        const void* ret = reinterpret_cast<void*>(_ios_get_reg(context->uc_mcontext->__ss, lr));
-
-        const void** current = const_cast<const void**>(reinterpret_cast<void**>(&_ios_get_reg(context->uc_mcontext->__ss, pc)));
+        const void* ret = reinterpret_cast<void*>(context->uc_mcontext->__ss.__lr);
+        const void* current = reinterpret_cast<void*>(context->uc_mcontext->__ss.__pc);
 
         Exception exception = {
-            signal_info->si_addr,
-            ret,
-            *current
+            current,
+            ret
         };
+
         HookManager::handler(exception);
     }
 }
