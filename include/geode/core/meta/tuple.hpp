@@ -90,8 +90,7 @@ namespace geode::core::meta {
         };
 
     public:
-        // I dunno why, but MSVC literally shows internal compiler structures if I don't wrap this
-        // sometimes.
+        // MSVC literally shows internal compiler structures if I don't wrap this sometimes.
         template <size_t i>
         using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Rest) + 1)>::result;
     };

@@ -11,9 +11,9 @@ namespace geode::core::meta::x86 {
     static constexpr bool sse_passable = any_of<std::remove_cv_t<Class>, float, double>;
 
     template <class Class>
-    static constexpr bool gpr_passable = (sizeof(Class) <= sizeof(void*)
-                                          && !std::is_class_v<Class> && !sse_passable<Class>)
-        || std::is_member_function_pointer_v<Class>;
+    static constexpr bool gpr_passable =
+        ((sizeof(Class) <= sizeof(void*) && !std::is_class_v<Class> && !sse_passable<Class>)
+         || std::is_member_function_pointer_v<Class>);
 
     template <class... Classes>
     static inline constexpr std::array<size_t, sizeof...(Classes)> reorder_pack() {

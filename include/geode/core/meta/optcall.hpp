@@ -197,8 +197,9 @@ namespace geode::core::meta::x86 {
 
             template <Ret (*detour)(Args...)>
             static Ret __cdecl wrapper(
-                // It's wrapped to stop MSVC from giving me error messages with internal compiler
-                // info. WTF.
+                /* It's wrapped to stop MSVC from giving me error messages with internal compiler
+                 * info. WTF.
+                 */
                 typename Tuple<Args...>::template type_at_wrap<stack>... rest
             ) {
                 Register<double> f0, f1, f2, f3;

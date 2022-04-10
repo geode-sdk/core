@@ -52,8 +52,9 @@ namespace geode::core::meta::x86 {
                 };
                 std::array<size_t, arr_size()> to = {};
 
-                // These are the indices of the placeholder float and int, for clobbering SSEs and
-                // GPRs, respectively.
+                /* These are the indices of the placeholder float and int, for clobbering SSEs and
+                 * GPRs, respectively.
+                 */
                 constexpr size_t CLOBBER_SSE = length;
                 constexpr size_t CLOBBER_GPR = length + 1;
 
@@ -152,8 +153,9 @@ namespace geode::core::meta::x86 {
 
             template <Ret (*detour)(Args...)>
             static Ret __vectorcall wrapper(
-                // It's wrapped to stop MSVC from giving me error messages with internal compiler
-                // info. WTF.
+                /* It's wrapped to stop MSVC from giving me error messages with internal compiler
+                 * info. WTF.
+                 */
                 typename Tuple<Args..., float, int>::template type_at_wrap<to>... raw
             ) {
                 auto all = Tuple<>::make(raw...);
