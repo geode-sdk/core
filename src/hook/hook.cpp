@@ -1,5 +1,6 @@
-#include <hook.hpp>
 #include "impl.hpp"
+
+#include <hook.hpp>
 
 using namespace geode::core;
 using namespace geode::core::hook;

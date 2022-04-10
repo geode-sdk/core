@@ -8,10 +8,10 @@
 
 namespace geode::core::meta {
     /* CRTP class for creating calling conventions for Function and Hook.
-    * Provides some utilities for less verbose filtering of parameters, and
-    * some wrappers to require the custom calling convention to supply an
-    * invoker and a way to get a wrapper for hooks.
-    */
+     * Provides some utilities for less verbose filtering of parameters, and
+     * some wrappers to require the custom calling convention to supply an
+     * invoker and a way to get a wrapper for hooks.
+     */
     template <class Ret, class... Args>
     class CallConv {
     protected:
@@ -31,7 +31,7 @@ namespace geode::core::meta {
             public:
                 using result = std::index_sequence<arr->at(indices)...>;
             };
-            
+
         public:
             using result = typename getter<std::make_index_sequence<length>>::result;
         };

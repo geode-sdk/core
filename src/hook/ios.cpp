@@ -1,11 +1,11 @@
 #include "ios.hpp"
+
 #include "impl.hpp"
 
-#include <mach/vm_map.h>       /* mach_vm_*            */
-#include <mach/mach_init.h>     /* mach_task_self()     */
-
-#include <signal.h>             /* sigaction            */
-#include <sys/ucontext.h>       /* ucontext_t           */
+#include <mach/mach_init.h> /* mach_task_self()     */
+#include <mach/vm_map.h>    /* mach_vm_*            */
+#include <signal.h>         /* sigaction            */
+#include <sys/ucontext.h>   /* ucontext_t           */
 
 using namespace geode::core::hook;
 
@@ -23,13 +23,11 @@ namespace {
 
         const void* ret = reinterpret_cast<void*>(_ios_get_reg(context->uc_mcontext->__ss, lr));
 
-        const void** current = const_cast<const void**>(reinterpret_cast<void**>(&_ios_get_reg(context->uc_mcontext->__ss, pc)));
+        const void** current = const_cast<const void**>(
+            reinterpret_cast<void**>(&_ios_get_reg(context->uc_mcontext->__ss, pc))
+        );
 
-        Exception exception = {
-            signal_info->si_addr,
-            ret,
-            *current
-        };
+        Exception exception = { signal_info->si_addr, ret, *current };
         HookManager::handler(exception);
     }
 }
@@ -47,10 +45,9 @@ bool iOS::initialize() {
 
     int signal = SIGTRAP;
 
-
     return sigaction(signal, &action, NULL) == 0;
 }
 
 const void* iOS::align_address(const void* address) {
-	return address; 
+    return address;
 }

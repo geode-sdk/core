@@ -7,11 +7,11 @@
 #include <utility>
 
 namespace geode::core::meta {
-    /* The Tuple class presents a nicer way to interact with parameter packs. 
-    * While this container is technically usable in other code, this is mostly
-    * used for static reflection in function wrapping. Other applications will
-    * usually be better covered by std::tuple.
-    */
+    /* The Tuple class presents a nicer way to interact with parameter packs.
+     * While this container is technically usable in other code, this is mostly
+     * used for static reflection in function wrapping. Other applications will
+     * usually be better covered by std::tuple.
+     */
     template <class...>
     class Tuple;
 
@@ -27,7 +27,7 @@ namespace geode::core::meta {
             constexpr Type at(std::integral_constant<size_t, i>&&) const {
                 return this->value;
             }
-        
+
         public:
             constexpr Element(Type value) : value(value) {}
         };
@@ -39,7 +39,7 @@ namespace geode::core::meta {
 
         public:
             static constexpr size_t size = sizeof...(Parents);
-            
+
             template <size_t i>
             constexpr decltype(auto) at() const {
                 static_assert(i < size, "Out of range access!");
@@ -59,9 +59,7 @@ namespace geode::core::meta {
     public:
         template <class... Classes>
         using elements_for = typename elements_for_impl<
-                std::make_index_sequence<sizeof...(Classes)>,
-                Classes...
-            >::result;
+            std::make_index_sequence<sizeof...(Classes)>, Classes...>::result;
 
         template <class... Classes>
         static auto make(Classes&&... values) {
@@ -92,7 +90,8 @@ namespace geode::core::meta {
         };
 
     public:
-        // I dunno why, but MSVC literally shows internal compiler structures if I don't wrap this sometimes.
+        // I dunno why, but MSVC literally shows internal compiler structures if I don't wrap this
+        // sometimes.
         template <size_t i>
         using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Rest) + 1)>::result;
     };
