@@ -23,7 +23,6 @@ namespace {
     void handler(int signal, siginfo_t* signal_info, void* vcontext) {
         ucontext_t* context = reinterpret_cast<ucontext_t*>(vcontext);
 
-<<<<<<< HEAD
         const void* ret = reinterpret_cast<void*>(context->uc_mcontext->__ss.__lr);
         const void* current = reinterpret_cast<void*>(context->uc_mcontext->__ss.__pc);
 
@@ -32,15 +31,6 @@ namespace {
             ret
         };
 
-=======
-        const void* ret = reinterpret_cast<void*>(_ios_get_reg(context->uc_mcontext->__ss, lr));
-
-        const void** current = const_cast<const void**>(
-            reinterpret_cast<void**>(&_ios_get_reg(context->uc_mcontext->__ss, pc))
-        );
-
-        Exception exception = { signal_info->si_addr, ret, *current };
->>>>>>> 27fa723a90793f1a89e2179591479cf0854eba5c
         HookManager::handler(exception);
     }
 }
