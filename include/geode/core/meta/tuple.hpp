@@ -90,6 +90,7 @@ namespace geode::core::meta {
         using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Classes))>::result;
     };
 
+    // Deduction guide!
     template <class... Classes>
     Tuple(Classes...) -> Tuple<Classes...>;
 }
