@@ -60,17 +60,12 @@ namespace geode::core::meta {
         template <class... Classes>
         using elements_for = typename elements_for_impl<
             std::make_index_sequence<sizeof...(Classes)>, Classes...>::result;
-
-        template <class... Classes>
-        static auto make(Classes&&... values) {
-            return Tuple<Classes...> { values... };
-        }
     };
 
-    template <class Current, class... Rest>
-    class Tuple<Current, Rest...> : public Tuple<>::elements_for<Current, Rest...> {
+    template <class... Classes>
+    class Tuple : public Tuple<>::elements_for<Classes...> {
     private:
-        using MyElements = Tuple<>::elements_for<Current, Rest...>;
+        using MyElements = Tuple<>::elements_for<Classes...>;
 
     public:
         template <size_t i>
@@ -92,8 +87,11 @@ namespace geode::core::meta {
     public:
         // MSVC literally shows internal compiler structures if I don't wrap this sometimes.
         template <size_t i>
-        using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Rest) + 1)>::result;
+        using type_at_wrap = typename type_at_wrap_impl<i, (i < sizeof...(Classes))>::result;
     };
+
+    template <class... Classes>
+    Tuple(Classes...) -> Tuple<Classes...>;
 }
 
 #endif /* GEODE_CORE_META_TUPLE_HPP */

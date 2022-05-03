@@ -158,7 +158,7 @@ namespace geode::core::meta::x86 {
                  */
                 typename Tuple<Args..., float, int>::template type_at_wrap<to>... raw
             ) {
-                auto all = Tuple<>::make(raw...);
+                Tuple all = { raw... };
                 return detour(all.template at<from>()...);
             }
         };

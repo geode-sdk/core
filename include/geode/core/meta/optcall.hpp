@@ -215,7 +215,7 @@ namespace geode::core::meta::x86 {
                     mov i1, edx
                 }
 
-                auto all = Tuple<>::make(f0, f1, f2, f3, i0, i1, rest...);
+                Tuple all = { f0, f1, f2, f3, i0, i1, rest... };
 
                 // Register<Type> has a explicit conversion operator we can take advantage of.
                 return detour(static_cast<Args>(all.template at<from>())...);
