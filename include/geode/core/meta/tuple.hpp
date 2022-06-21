@@ -24,12 +24,12 @@ namespace geode::core::meta {
             Type value;
 
         protected:
-            constexpr Type at(std::integral_constant<size_t, i>&&) const {
+            constexpr inline Type at(std::integral_constant<size_t, i>&&) const {
                 return this->value;
             }
 
         public:
-            constexpr Element(Type value) : value(value) {}
+            constexpr inline Element(Type value) : value(value) {}
         };
 
         template <class... Parents>
@@ -41,7 +41,7 @@ namespace geode::core::meta {
             static constexpr size_t size = sizeof...(Parents);
 
             template <size_t i>
-            constexpr decltype(auto) at() const {
+            constexpr inline decltype(auto) at() const {
                 static_assert(i < size, "Out of range access!");
                 return this->at(std::integral_constant<size_t, i>());
             }

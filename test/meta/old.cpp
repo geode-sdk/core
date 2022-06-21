@@ -104,7 +104,7 @@ int main() {
     float fl0 = 0.123f;
     float fl3 = 3.123f;
     __asm {
-        movss xmm0, fl0
+        movss xmm0, fl0 
         mov ecx, 123
         mov edx, 420
         movss xmm3, fl3
