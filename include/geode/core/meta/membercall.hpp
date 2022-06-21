@@ -183,11 +183,6 @@ namespace geode::core::meta::x86 {
             return &MyImpl::template wrapper<detour>;
         }
     };
-
-    template <class Ret, class... Args>
-    class Membercall2 : public Membercall<Ret, Args...> {
-    private:
-    };
 }
 
 #endif /* GEODE_CORE_META_MEMBERCALL_HPP */
