@@ -243,6 +243,31 @@ namespace geode::core::meta::x86 {
             return &MyImpl::template wrapper<detour>;
         }
     };
+
+    // Struct return special case
+    // clang-format off
+    // This doesn't work properly with clang-format yet, it seems. Weird.
+    template <class Ret, class... Args> requires std::is_class_v<Ret>
+    class Optcall<Ret, Args...> : private Optcall<Ret*, Ret*, Args...> {
+    private:
+        // clang-format on
+        using Parent = Optcall<Ret*, Ret*, Args...>;
+
+    private:
+        static Ret* grab_ptr(Ret* ret, void* address, Args... args) {
+            return Parent::invoke(address, ret, args...);
+        }
+
+    public:
+        static Ret invoke(void* address, Args... args) {
+            return reinterpret_cast<Ret (*)(void*, Args...)>(&grab_ptr)(address, args...);
+        }
+
+        template <Ret (*detour)(Args...)>
+        static constexpr decltype(auto) get_wrapper() {
+            return reinterpet_cast<Ret (*)(Args...)>(Parent::get_wrapper());
+        }
+    };
 }
 
 #endif /* GEODE_CORE_META_OPTCALL_HPP */

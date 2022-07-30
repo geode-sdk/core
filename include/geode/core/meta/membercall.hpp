@@ -183,6 +183,32 @@ namespace geode::core::meta::x86 {
             return &MyImpl::template wrapper<detour>;
         }
     };
+
+    // Struct return special case
+    // clang-format off
+    template <class Ret, class Self, class... Args> requires std::is_class_v<Ret>
+    class Membercall<Ret, Self, Args...> : Membercall<Ret*, Self, Ret*, Args...> {
+    private:
+        // clang-format on
+        using Parent = Membercall<Ret*, Self, Ret*, Args...>;
+
+    private:
+        static Ret* grab_ptr(Ret* ret, void* address, Self self, Args... args) {
+            return Parent::invoke(address, self, ret, args...);
+        }
+
+    public:
+        static Ret invoke(void* address, Self self, Args... args) {
+            return reinterpret_cast<Ret (*)(void*, Self, Args...)>(&grab_ptr
+            )(address, self, args...);
+        }
+
+        // This is almost definitely wrong. Fix later, please!
+        template <Ret (*detour)(Self, Args...)>
+        static constexpr decltype(auto) get_wrapper() {
+            return reinterpet_cast<Ret (*)(Self, Args...)>(Parent::get_wrapper());
+        }
+    };
 }
 
 #endif /* GEODE_CORE_META_MEMBERCALL_HPP */
