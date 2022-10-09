@@ -36,7 +36,7 @@ namespace geode::core::meta {
             using result = typename getter<std::make_index_sequence<length>>::result;
         };
 
-        template <auto& arr>
+        template <auto arr>
         using arr_to_seq = typename arr_to_seq_impl<&arr>::result;
     };
 }

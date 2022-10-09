@@ -30,8 +30,8 @@ foreach (TEST IN LISTS TESTS)
 
     # This is so we target the right architecture for meta on Clang for Windows.
     if (META_TEST AND CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-        target_compile_options("${TARGET}" PRIVATE "--target=i686-pc-windows-msvc")
-        target_link_options("${TARGET}" PRIVATE "--target=i686-pc-windows-msvc")
+        target_compile_options("${TARGET}" PRIVATE "--target=i386-pc-windows-msvc")
+        target_link_options("${TARGET}" PRIVATE "--target=i386-pc-windows-msvc")
     endif()
     add_test(NAME "${TARGET}" COMMAND "${TARGET}")
 endforeach()

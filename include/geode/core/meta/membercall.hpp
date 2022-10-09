@@ -19,9 +19,9 @@ namespace geode::core::meta::x86 {
             static constexpr size_t length = sizeof...(Args);
 
             static constexpr size_t SSES = 3;
-            static constexpr bool is_sse[length] = { sse_passable<Args>... };
+            static constexpr std::array<bool, length> is_sse = { sse_passable<Args>... };
 
-            static constexpr bool is_gpr[length] = { gpr_passable<Args>... };
+            static constexpr std::array<bool, length> is_gpr = { gpr_passable<Args>... };
 
             static constexpr auto reordered_arr = reorder_pack<Args...>();
 
@@ -122,13 +122,9 @@ namespace geode::core::meta::x86 {
                 return from;
             }
 
-            // Annoyingly, unless we're using C++20, we can't eliminate these intermediates. (afaik)
-            static constexpr auto to_arr = filter_to();
-            static constexpr auto from_arr = filter_from();
-
         public:
-            using to = typename MyConv::template arr_to_seq<to_arr>;
-            using from = typename MyConv::template arr_to_seq<from_arr>;
+            using to = typename MyConv::template arr_to_seq<filter_to()>;
+            using from = typename MyConv::template arr_to_seq<filter_from()>;
         };
 
     private:
